@@ -85,25 +85,25 @@ func routes() *httprouter.Router {
 		New().
 		ThenFunc(controller.AboutGET)))
 
-	// Notepad
-	r.GET("/notepad", hr.Handler(alice.
+	// Channel
+	r.GET("/channel", hr.Handler(alice.
 		New(acl.DisallowAnon).
-		ThenFunc(controller.NotepadReadGET)))
-	r.GET("/notepad/create", hr.Handler(alice.
+		ThenFunc(controller.ChannelReadGET)))
+	r.GET("/channel/create", hr.Handler(alice.
 		New(acl.DisallowAnon).
-		ThenFunc(controller.NotepadCreateGET)))
-	r.POST("/notepad/create", hr.Handler(alice.
+		ThenFunc(controller.ChannelCreateGET)))
+	r.POST("/channel/create", hr.Handler(alice.
 		New(acl.DisallowAnon).
-		ThenFunc(controller.NotepadCreatePOST)))
-	r.GET("/notepad/update/:id", hr.Handler(alice.
+		ThenFunc(controller.ChannelCreatePOST)))
+	r.GET("/channel/update/:id", hr.Handler(alice.
 		New(acl.DisallowAnon).
-		ThenFunc(controller.NotepadUpdateGET)))
-	r.POST("/notepad/update/:id", hr.Handler(alice.
+		ThenFunc(controller.ChannelUpdateGET)))
+	r.POST("/channel/update/:id", hr.Handler(alice.
 		New(acl.DisallowAnon).
-		ThenFunc(controller.NotepadUpdatePOST)))
-	r.GET("/notepad/delete/:id", hr.Handler(alice.
+		ThenFunc(controller.ChannelUpdatePOST)))
+	r.GET("/channel/delete/:id", hr.Handler(alice.
 		New(acl.DisallowAnon).
-		ThenFunc(controller.NotepadDeleteGET)))
+		ThenFunc(controller.ChannelDeleteGET)))
 
 	// Enable Pprof
 	r.GET("/debug/pprof/*pprof", hr.Handler(alice.

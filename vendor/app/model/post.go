@@ -14,13 +14,13 @@ import (
 )
 
 // *****************************************************************************
-// Note
+// Post
 // *****************************************************************************
 
-// Note table contains the information for each note
-type Note struct {
+// Post table contains the information for each post
+type Post struct {
 	ObjectID  bson.ObjectId `bson:"_id"`
-	ID        uint32        `db:"id" bson:"id,omitempty"` // Don't use Id, use NoteID() instead for consistency with MongoDB
+	ID        uint32        `db:"id" bson:"id,omitempty"` // Don't use Id, use PostID() instead for consistency with MongoDB
 	Content   string        `db:"content" bson:"content"`
 	UserID    bson.ObjectId `bson:"user_id"`
 	UID       uint32        `db:"user_id" bson:"userid,omitempty"`
@@ -29,8 +29,8 @@ type Note struct {
 	Deleted   uint8         `db:"deleted" bson:"deleted"`
 }
 
-// NoteID returns the note id
-func (u *Note) NoteID() string {
+// PostID returns the post id
+func (u *Post) PostID() string {
 	r := ""
 
 	switch database.ReadConfig().Type {
@@ -45,27 +45,27 @@ func (u *Note) NoteID() string {
 	return r
 }
 
-// NoteByID gets note by ID
-func NoteByID(userID string, noteID string) (Note, error) {
+// PostByID gets post by ID
+func PostByID(userID string, postID string) (Post, error) {
 	var err error
 
-	result := Note{}
+	result := Post{}
 
 	switch database.ReadConfig().Type {
 	case database.TypeMySQL:
-		err = database.SQL.Get(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM note WHERE id = ? AND user_id = ? LIMIT 1", noteID, userID)
+		err = database.SQL.Get(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE id = ? AND user_id = ? LIMIT 1", postID, userID)
 	case database.TypeMongoDB:
 		if database.CheckConnection() {
 			// Create a copy of mongo
 			session := database.Mongo.Copy()
 			defer session.Close()
-			c := session.DB(database.ReadConfig().MongoDB.Database).C("note")
+			c := session.DB(database.ReadConfig().MongoDB.Database).C("post")
 
 			// Validate the object id
-			if bson.IsObjectIdHex(noteID) {
-				err = c.FindId(bson.ObjectIdHex(noteID)).One(&result)
+			if bson.IsObjectIdHex(postID) {
+				err = c.FindId(bson.ObjectIdHex(postID)).One(&result)
 				if result.UserID != bson.ObjectIdHex(userID) {
-					result = Note{}
+					result = Post{}
 					err = ErrUnauthorized
 				}
 			} else {
@@ -75,12 +75,12 @@ func NoteByID(userID string, noteID string) (Note, error) {
 			err = ErrUnavailable
 		}
 	case database.TypeBolt:
-		err = database.View("note", userID+noteID, &result)
+		err = database.View("post", userID+postID, &result)
 		if err != nil {
 			err = ErrNoResult
 		}
 		if result.UserID != bson.ObjectIdHex(userID) {
-			result = Note{}
+			result = Post{}
 			err = ErrUnauthorized
 		}
 	default:
@@ -90,21 +90,21 @@ func NoteByID(userID string, noteID string) (Note, error) {
 	return result, standardizeError(err)
 }
 
-// NotesByUserID gets all notes for a user
-func NotesByUserID(userID string) ([]Note, error) {
+// PostsByUserID gets all posts for a user
+func PostsByUserID(userID string) ([]Post, error) {
 	var err error
 
-	var result []Note
+	var result []Post
 
 	switch database.ReadConfig().Type {
 	case database.TypeMySQL:
-		err = database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM note WHERE user_id = ?", userID)
+		err = database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
 	case database.TypeMongoDB:
 		if database.CheckConnection() {
 			// Create a copy of mongo
 			session := database.Mongo.Copy()
 			defer session.Close()
-			c := session.DB(database.ReadConfig().MongoDB.Database).C("note")
+			c := session.DB(database.ReadConfig().MongoDB.Database).C("post")
 
 			// Validate the object id
 			if bson.IsObjectIdHex(userID) {
@@ -119,7 +119,7 @@ func NotesByUserID(userID string) ([]Note, error) {
 		// View retrieves a record set in Bolt
 		err = database.BoltDB.View(func(tx *bolt.Tx) error {
 			// Get the bucket
-			b := tx.Bucket([]byte("note"))
+			b := tx.Bucket([]byte("post"))
 			if b == nil {
 				return bolt.ErrBucketNotFound
 			}
@@ -129,7 +129,7 @@ func NotesByUserID(userID string) ([]Note, error) {
 
 			prefix := []byte(userID)
 			for k, v := c.Seek(prefix); bytes.HasPrefix(k, prefix); k, v = c.Next() {
-				var single Note
+				var single Post
 
 				// Decode the record
 				err := json.Unmarshal(v, &single)
@@ -150,23 +150,23 @@ func NotesByUserID(userID string) ([]Note, error) {
 	return result, standardizeError(err)
 }
 
-// NoteCreate creates a note
-func NoteCreate(content string, userID string) error {
+// PostCreate creates a post
+func PostCreate(content string, userID string) error {
 	var err error
 
 	now := time.Now()
 
 	switch database.ReadConfig().Type {
 	case database.TypeMySQL:
-		_, err = database.SQL.Exec("INSERT INTO note (content, user_id) VALUES (?,?)", content, userID)
+		_, err = database.SQL.Exec("INSERT INTO post (content, user_id) VALUES (?,?)", content, userID)
 	case database.TypeMongoDB:
 		if database.CheckConnection() {
 			// Create a copy of mongo
 			session := database.Mongo.Copy()
 			defer session.Close()
-			c := session.DB(database.ReadConfig().MongoDB.Database).C("note")
+			c := session.DB(database.ReadConfig().MongoDB.Database).C("post")
 
-			note := &Note{
+			post := &Post{
 				ObjectID:  bson.NewObjectId(),
 				Content:   content,
 				UserID:    bson.ObjectIdHex(userID),
@@ -174,12 +174,12 @@ func NoteCreate(content string, userID string) error {
 				UpdatedAt: now,
 				Deleted:   0,
 			}
-			err = c.Insert(note)
+			err = c.Insert(post)
 		} else {
 			err = ErrUnavailable
 		}
 	case database.TypeBolt:
-		note := &Note{
+		post := &Post{
 			ObjectID:  bson.NewObjectId(),
 			Content:   content,
 			UserID:    bson.ObjectIdHex(userID),
@@ -188,7 +188,7 @@ func NoteCreate(content string, userID string) error {
 			Deleted:   0,
 		}
 
-		err = database.Update("note", userID+note.ObjectID.Hex(), &note)
+		err = database.Update("post", userID+post.ObjectID.Hex(), &post)
 	default:
 		err = ErrCode
 	}
@@ -196,29 +196,29 @@ func NoteCreate(content string, userID string) error {
 	return standardizeError(err)
 }
 
-// NoteUpdate updates a note
-func NoteUpdate(content string, userID string, noteID string) error {
+// PostUpdate updates a post
+func PostUpdate(content string, userID string, postID string) error {
 	var err error
 
 	now := time.Now()
 
 	switch database.ReadConfig().Type {
 	case database.TypeMySQL:
-		_, err = database.SQL.Exec("UPDATE note SET content=? WHERE id = ? AND user_id = ? LIMIT 1", content, noteID, userID)
+		_, err = database.SQL.Exec("UPDATE post SET content=? WHERE id = ? AND user_id = ? LIMIT 1", content, postID, userID)
 	case database.TypeMongoDB:
 		if database.CheckConnection() {
 			// Create a copy of mongo
 			session := database.Mongo.Copy()
 			defer session.Close()
-			c := session.DB(database.ReadConfig().MongoDB.Database).C("note")
-			var note Note
-			note, err = NoteByID(userID, noteID)
+			c := session.DB(database.ReadConfig().MongoDB.Database).C("post")
+			var post Post
+			post, err = PostByID(userID, postID)
 			if err == nil {
-				// Confirm the owner is attempting to modify the note
-				if note.UserID.Hex() == userID {
-					note.UpdatedAt = now
-					note.Content = content
-					err = c.UpdateId(bson.ObjectIdHex(noteID), &note)
+				// Confirm the owner is attempting to modify the post
+				if post.UserID.Hex() == userID {
+					post.UpdatedAt = now
+					post.Content = content
+					err = c.UpdateId(bson.ObjectIdHex(postID), &post)
 				} else {
 					err = ErrUnauthorized
 				}
@@ -227,14 +227,14 @@ func NoteUpdate(content string, userID string, noteID string) error {
 			err = ErrUnavailable
 		}
 	case database.TypeBolt:
-		var note Note
-		note, err = NoteByID(userID, noteID)
+		var post Post
+		post, err = PostByID(userID, postID)
 		if err == nil {
-			// Confirm the owner is attempting to modify the note
-			if note.UserID.Hex() == userID {
-				note.UpdatedAt = now
-				note.Content = content
-				err = database.Update("note", userID+note.ObjectID.Hex(), &note)
+			// Confirm the owner is attempting to modify the post
+			if post.UserID.Hex() == userID {
+				post.UpdatedAt = now
+				post.Content = content
+				err = database.Update("post", userID+post.ObjectID.Hex(), &post)
 			} else {
 				err = ErrUnauthorized
 			}
@@ -246,26 +246,26 @@ func NoteUpdate(content string, userID string, noteID string) error {
 	return standardizeError(err)
 }
 
-// NoteDelete deletes a note
-func NoteDelete(userID string, noteID string) error {
+// PostDelete deletes a post
+func PostDelete(userID string, postID string) error {
 	var err error
 
 	switch database.ReadConfig().Type {
 	case database.TypeMySQL:
-		_, err = database.SQL.Exec("DELETE FROM note WHERE id = ? AND user_id = ?", noteID, userID)
+		_, err = database.SQL.Exec("DELETE FROM post WHERE id = ? AND user_id = ?", postID, userID)
 	case database.TypeMongoDB:
 		if database.CheckConnection() {
 			// Create a copy of mongo
 			session := database.Mongo.Copy()
 			defer session.Close()
-			c := session.DB(database.ReadConfig().MongoDB.Database).C("note")
+			c := session.DB(database.ReadConfig().MongoDB.Database).C("post")
 
-			var note Note
-			note, err = NoteByID(userID, noteID)
+			var post Post
+			post, err = PostByID(userID, postID)
 			if err == nil {
-				// Confirm the owner is attempting to modify the note
-				if note.UserID.Hex() == userID {
-					err = c.RemoveId(bson.ObjectIdHex(noteID))
+				// Confirm the owner is attempting to modify the post
+				if post.UserID.Hex() == userID {
+					err = c.RemoveId(bson.ObjectIdHex(postID))
 				} else {
 					err = ErrUnauthorized
 				}
@@ -274,12 +274,12 @@ func NoteDelete(userID string, noteID string) error {
 			err = ErrUnavailable
 		}
 	case database.TypeBolt:
-		var note Note
-		note, err = NoteByID(userID, noteID)
+		var post Post
+		post, err = PostByID(userID, postID)
 		if err == nil {
-			// Confirm the owner is attempting to modify the note
-			if note.UserID.Hex() == userID {
-				err = database.Delete("note", userID+note.ObjectID.Hex())
+			// Confirm the owner is attempting to modify the post
+			if post.UserID.Hex() == userID {
+				err = database.Delete("post", userID+post.ObjectID.Hex())
 			} else {
 				err = ErrUnauthorized
 			}

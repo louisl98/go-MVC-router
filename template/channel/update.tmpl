@@ -1,4 +1,4 @@
-{{define "title"}}Add Note{{end}}
+{{define "title"}}Edit Post{{end}}
 {{define "head"}}{{end}}
 {{define "content"}}
 
@@ -9,14 +9,14 @@
 	
 	<form id="form" method="post">
 		<div class="form-group">
-			<label for="note">Note</label>
-			<div><textarea rows="5" class="form-control" id="note" name="note" placeholder="Type your note here..." value="" /></textarea></div>
+			<label for="post">Post</label>
+			<div><textarea rows="5" class="form-control" id="post" name="post" placeholder="Type your post here..." />{{.post}}</textarea></div>
 		</div>
 		
 		<a title="Save" class="btn btn-success" role="submit" onclick="document.getElementById('form').submit();">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save
 		</a>
-		<a title="Back to Notepad" class="btn btn-danger" role="button" href="{{$.BaseURI}}notepad">
+		<a title="Back to Channel" class="btn btn-danger" role="button" href="{{$.BaseURI}}channel">
 			<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span> Back
 		</a>
 		

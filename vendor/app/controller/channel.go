@@ -14,147 +14,147 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// NotepadReadGET displays the notes in the notepad
-func NotepadReadGET(w http.ResponseWriter, r *http.Request) {
+// ChannelReadGET displays the posts in the channel
+func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
 	userID := fmt.Sprintf("%s", sess.Values["id"])
 
-	notes, err := model.NotesByUserID(userID)
+	posts, err := model.PostsByUserID(userID)
 	if err != nil {
 		log.Println(err)
-		notes = []model.Note{}
+		posts = []model.Post{}
 	}
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "notepad/read"
+	v.Name = "channel/read"
 	v.Vars["first_name"] = sess.Values["first_name"]
-	v.Vars["notes"] = notes
+	v.Vars["posts"] = posts
 	v.Render(w)
 }
 
-// NotepadCreateGET displays the note creation page
-func NotepadCreateGET(w http.ResponseWriter, r *http.Request) {
+// ChannelCreateGET displays the post creation page
+func ChannelCreateGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "notepad/create"
+	v.Name = "channel/create"
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Render(w)
 }
 
-// NotepadCreatePOST handles the note creation form submission
-func NotepadCreatePOST(w http.ResponseWriter, r *http.Request) {
+// ChannelCreatePOST handles the post creation form submission
+func ChannelCreatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
 	// Validate with required fields
-	if validate, missingField := view.Validate(r, []string{"note"}); !validate {
+	if validate, missingField := view.Validate(r, []string{"post"}); !validate {
 		sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
 		sess.Save(r, w)
-		NotepadCreateGET(w, r)
+		ChannelCreateGET(w, r)
 		return
 	}
 
 	// Get form values
-	content := r.FormValue("note")
+	content := r.FormValue("post")
 
 	userID := fmt.Sprintf("%s", sess.Values["id"])
 
 	// Get database result
-	err := model.NoteCreate(content, userID)
+	err := model.PostCreate(content, userID)
 	// Will only error if there is a problem with the query
 	if err != nil {
 		log.Println(err)
 		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 		sess.Save(r, w)
 	} else {
-		sess.AddFlash(view.Flash{"Note added!", view.FlashSuccess})
+		sess.AddFlash(view.Flash{"Post added!", view.FlashSuccess})
 		sess.Save(r, w)
-		http.Redirect(w, r, "/notepad", http.StatusFound)
+		http.Redirect(w, r, "/channel", http.StatusFound)
 		return
 	}
 
 	// Display the same page
-	NotepadCreateGET(w, r)
+	ChannelCreateGET(w, r)
 }
 
-// NotepadUpdateGET displays the note update page
-func NotepadUpdateGET(w http.ResponseWriter, r *http.Request) {
+// ChannelUpdateGET displays the post update page
+func ChannelUpdateGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
-	// Get the note id
+	// Get the post id
 	var params httprouter.Params
 	params = context.Get(r, "params").(httprouter.Params)
-	noteID := params.ByName("id")
+	postID := params.ByName("id")
 
 	userID := fmt.Sprintf("%s", sess.Values["id"])
 
-	// Get the note
-	note, err := model.NoteByID(userID, noteID)
-	if err != nil { // If the note doesn't exist
+	// Get the post
+	post, err := model.PostByID(userID, postID)
+	if err != nil { // If the post doesn't exist
 		log.Println(err)
 		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 		sess.Save(r, w)
-		http.Redirect(w, r, "/notepad", http.StatusFound)
+		http.Redirect(w, r, "/channel", http.StatusFound)
 		return
 	}
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "notepad/update"
+	v.Name = "channel/update"
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
-	v.Vars["note"] = note.Content
+	v.Vars["post"] = post.Content
 	v.Render(w)
 }
 
-// NotepadUpdatePOST handles the note update form submission
-func NotepadUpdatePOST(w http.ResponseWriter, r *http.Request) {
+// ChannelUpdatePOST handles the post update form submission
+func ChannelUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
 	// Validate with required fields
-	if validate, missingField := view.Validate(r, []string{"note"}); !validate {
+	if validate, missingField := view.Validate(r, []string{"post"}); !validate {
 		sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
 		sess.Save(r, w)
-		NotepadUpdateGET(w, r)
+		ChannelUpdateGET(w, r)
 		return
 	}
 
 	// Get form values
-	content := r.FormValue("note")
+	content := r.FormValue("post")
 
 	userID := fmt.Sprintf("%s", sess.Values["id"])
 
 	var params httprouter.Params
 	params = context.Get(r, "params").(httprouter.Params)
-	noteID := params.ByName("id")
+	postID := params.ByName("id")
 
 	// Get database result
-	err := model.NoteUpdate(content, userID, noteID)
+	err := model.PostUpdate(content, userID, postID)
 	// Will only error if there is a problem with the query
 	if err != nil {
 		log.Println(err)
 		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 		sess.Save(r, w)
 	} else {
-		sess.AddFlash(view.Flash{"Note updated!", view.FlashSuccess})
+		sess.AddFlash(view.Flash{"Post updated!", view.FlashSuccess})
 		sess.Save(r, w)
-		http.Redirect(w, r, "/notepad", http.StatusFound)
+		http.Redirect(w, r, "/channel", http.StatusFound)
 		return
 	}
 
 	// Display the same page
-	NotepadUpdateGET(w, r)
+	ChannelUpdateGET(w, r)
 }
 
-// NotepadDeleteGET handles the note deletion
-func NotepadDeleteGET(w http.ResponseWriter, r *http.Request) {
+// ChannelDeleteGET handles the post deletion
+func ChannelDeleteGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
@@ -162,20 +162,20 @@ func NotepadDeleteGET(w http.ResponseWriter, r *http.Request) {
 
 	var params httprouter.Params
 	params = context.Get(r, "params").(httprouter.Params)
-	noteID := params.ByName("id")
+	postID := params.ByName("id")
 
 	// Get database result
-	err := model.NoteDelete(userID, noteID)
+	err := model.PostDelete(userID, postID)
 	// Will only error if there is a problem with the query
 	if err != nil {
 		log.Println(err)
 		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 		sess.Save(r, w)
 	} else {
-		sess.AddFlash(view.Flash{"Note deleted!", view.FlashSuccess})
+		sess.AddFlash(view.Flash{"Post deleted!", view.FlashSuccess})
 		sess.Save(r, w)
 	}
 
-	http.Redirect(w, r, "/notepad", http.StatusFound)
+	http.Redirect(w, r, "/channel", http.StatusFound)
 	return
 }
