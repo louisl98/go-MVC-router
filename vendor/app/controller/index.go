@@ -16,7 +16,7 @@ func IndexGET(w http.ResponseWriter, r *http.Request) {
 		// Display the view
 		v := view.New(r)
 		v.Name = "index/auth"
-		v.Vars["first_name"] = session.Values["first_name"]
+		v.Vars["username"] = session.Values["username"]
 		v.Render(w)
 	} else {
 		// Display the view

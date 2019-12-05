@@ -23,7 +23,7 @@ func RegisterGET(w http.ResponseWriter, r *http.Request) {
 	v.Name = "register/register"
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	// Refill any form fields
-	view.Repopulate([]string{"first_name", "last_name", "email"}, r.Form, v.Vars)
+	view.Repopulate([]string{"username", "email"}, r.Form, v.Vars)
 	v.Render(w)
 }
 
@@ -40,7 +40,7 @@ func RegisterPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Validate with required fields
-	if validate, missingField := view.Validate(r, []string{"first_name", "last_name", "email", "password"}); !validate {
+	if validate, missingField := view.Validate(r, []string{"username", "email", "password"}); !validate {
 		sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
 		sess.Save(r, w)
 		RegisterGET(w, r)
@@ -56,8 +56,7 @@ func RegisterPOST(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get form values
-	firstName := r.FormValue("first_name")
-	lastName := r.FormValue("last_name")
+	username := r.FormValue("username")
 	email := r.FormValue("email")
 	password, errp := passhash.HashString(r.FormValue("password"))
 
@@ -74,7 +73,7 @@ func RegisterPOST(w http.ResponseWriter, r *http.Request) {
 	_, err := model.UserByEmail(email)
 
 	if err == model.ErrNoResult { // If success (no user exists with that email)
-		ex := model.UserCreate(firstName, lastName, email, password)
+		ex := model.UserCreate(username, email, password)
 		// Will only error if there is a problem with the query
 		if ex != nil {
 			log.Println(ex)

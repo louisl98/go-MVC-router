@@ -86,19 +86,19 @@ func routes() *httprouter.Router {
 		ThenFunc(controller.AboutGET)))
 
 	// Channel
-	r.GET("/channel", hr.Handler(alice.
+	r.GET("/channel/", hr.Handler(alice.
 		New(acl.DisallowAnon).
 		ThenFunc(controller.ChannelReadGET)))
-	r.GET("/channel/create", hr.Handler(alice.
+	r.GET("/channel/newpost", hr.Handler(alice.
 		New(acl.DisallowAnon).
 		ThenFunc(controller.ChannelCreateGET)))
-	r.POST("/channel/create", hr.Handler(alice.
+	r.POST("/channel/newpost", hr.Handler(alice.
 		New(acl.DisallowAnon).
 		ThenFunc(controller.ChannelCreatePOST)))
-	r.GET("/channel/update/:id", hr.Handler(alice.
+	r.GET("/channel/editpost/:id", hr.Handler(alice.
 		New(acl.DisallowAnon).
 		ThenFunc(controller.ChannelUpdateGET)))
-	r.POST("/channel/update/:id", hr.Handler(alice.
+	r.POST("/channel/editpost/:id", hr.Handler(alice.
 		New(acl.DisallowAnon).
 		ThenFunc(controller.ChannelUpdatePOST)))
 	r.GET("/channel/delete/:id", hr.Handler(alice.

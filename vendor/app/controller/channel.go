@@ -29,8 +29,8 @@ func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "channel/read"
-	v.Vars["first_name"] = sess.Values["first_name"]
+	v.Name = "channel/channelcontent"
+	v.Vars["username"] = sess.Values["username"]
 	v.Vars["posts"] = posts
 	v.Render(w)
 }
@@ -42,7 +42,7 @@ func ChannelCreateGET(w http.ResponseWriter, r *http.Request) {
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "channel/create"
+	v.Name = "channel/newpost"
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Render(w)
 }
@@ -107,7 +107,7 @@ func ChannelUpdateGET(w http.ResponseWriter, r *http.Request) {
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "channel/update"
+	v.Name = "channel/editpost"
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Vars["post"] = post.Content
 	v.Render(w)

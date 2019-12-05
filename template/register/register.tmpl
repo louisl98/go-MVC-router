@@ -1,4 +1,4 @@
-{{define "title"}}Create an Account{{end}}
+{{define "title"}}Create an account{{end}}
 {{define "head"}}{{JS "//www.google.com/recaptcha/api.js"}}{{end}}
 {{define "content"}}
 
@@ -8,15 +8,9 @@
 	</div>
 	<form method="post">
 		<div class="form-group">
-			<label for="first_name">First Name</label>
-			<div><input type="text" class="form-control" id="first_name" name="first_name" maxlength="48" placeholder="First Name" value="{{.first_name}}" /></div>
-		</div>
-		
-		<div class="form-group">
-			<label for="last_name">Last Name</label>
-			<div><input type="text" class="form-control" id="last_name" name="last_name" maxlength="48" placeholder="Last Name" value="{{.last_name}}" /></div>
-		</div>
-		
+			<label for="username">Username</label>
+			<div><input type="text" class="form-control" id="username" name="username" maxlength="48" placeholder="Username" value="{{.username}}" /></div>
+		</div>		
 		<div class="form-group">
 			<label for="email">Email</label>
 			<div><input type="email" class="form-control" id="email" name="email" maxlength="48" placeholder="Email" value="{{.email}}" /></div>

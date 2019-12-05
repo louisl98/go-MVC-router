@@ -17,8 +17,7 @@ import (
 type User struct {
 	ObjectID  bson.ObjectId `bson:"_id"`
 	ID        uint32        `db:"id" bson:"id,omitempty"` // Don't use Id, use UserID() instead for consistency with MongoDB
-	FirstName string        `db:"first_name" bson:"first_name"`
-	LastName  string        `db:"last_name" bson:"last_name"`
+	Username  string        `db:"username" bson:"username"`
 	Email     string        `db:"email" bson:"email"`
 	Password  string        `db:"password" bson:"password"`
 	StatusID  uint8         `db:"status_id" bson:"status_id"`
@@ -60,7 +59,7 @@ func UserByEmail(email string) (User, error) {
 
 	switch database.ReadConfig().Type {
 	case database.TypeMySQL:
-		err = database.SQL.Get(&result, "SELECT id, password, status_id, first_name FROM user WHERE email = ? LIMIT 1", email)
+		err = database.SQL.Get(&result, "SELECT id, password, status_id, username FROM user WHERE email = ? LIMIT 1", email)
 	case database.TypeMongoDB:
 		if database.CheckConnection() {
 			session := database.Mongo.Copy()
@@ -83,15 +82,14 @@ func UserByEmail(email string) (User, error) {
 }
 
 // UserCreate creates user
-func UserCreate(firstName, lastName, email, password string) error {
+func UserCreate(username, email, password string) error {
 	var err error
 
 	now := time.Now()
 
 	switch database.ReadConfig().Type {
 	case database.TypeMySQL:
-		_, err = database.SQL.Exec("INSERT INTO user (first_name, last_name, email, password) VALUES (?,?,?,?)", firstName,
-			lastName, email, password)
+		_, err = database.SQL.Exec("INSERT INTO user (username, email, password) VALUES (?,?,?)", username, email, password)
 	case database.TypeMongoDB:
 		if database.CheckConnection() {
 			session := database.Mongo.Copy()
@@ -100,8 +98,7 @@ func UserCreate(firstName, lastName, email, password string) error {
 
 			user := &User{
 				ObjectID:  bson.NewObjectId(),
-				FirstName: firstName,
-				LastName:  lastName,
+				Username:  username,
 				Email:     email,
 				Password:  password,
 				StatusID:  1,
@@ -116,8 +113,7 @@ func UserCreate(firstName, lastName, email, password string) error {
 	case database.TypeBolt:
 		user := &User{
 			ObjectID:  bson.NewObjectId(),
-			FirstName: firstName,
-			LastName:  lastName,
+			Username:  username,
 			Email:     email,
 			Password:  password,
 			StatusID:  1,
