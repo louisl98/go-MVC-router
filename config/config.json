@@ -40,7 +40,7 @@
 	},
 	"Session": {
 		"SecretKey": "@r4B?EThaSEh_drudR7P_hub=s#s2Pah",
-		"Name": "name",
+		"Name": "Guest",
 		"Options": {
 			"Path": "/",
 			"Domain": "",
