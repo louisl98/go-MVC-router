@@ -12,7 +12,7 @@ This project demonstrates how to structure and build a website using the Go lang
 To download, run the following command:
 
 ~~~
-go get github.com/josephspurrier/gowebapp
+go get github.com/louisl98/go-mvc
 ~~~
 
 If you are on Go 1.5, you need to set GOVENDOREXPERIMENT to 1. If you are on Go 1.4 or earlier, the code will not work because it uses the vendor folder.
