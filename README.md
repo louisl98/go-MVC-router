@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/josephspurrier/gowebapp)](https://goreportcard.com/report/github.com/josephspurrier/gowebapp)
 [![GoDoc](https://godoc.org/github.com/josephspurrier/gowebapp?status.svg)](https://godoc.org/github.com/josephspurrier/gowebapp) 
 
-Basic MVC Web Application in Go - Forked from github.com/josephspurrier/gowebapp
+Basic MVC Web Application in Go - Forked from https://github.com/josephspurrier/gowebapp
 
 #### I recommend you use Blue Jay which is the latest version of this project: [https://github.com/blue-jay/blueprint](https://github.com/blue-jay/blueprint).
 
