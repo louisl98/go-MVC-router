@@ -9,10 +9,12 @@ Basic MVC Web Application in Go - Forked from https://github.com/josephspurrier/
 
 This project demonstrates how to structure and build a website using the Go language without a framework. There is a blog article you can read at [http://www.josephspurrier.com/go-web-app-example/](http://www.josephspurrier.com/go-web-app-example/). There is a full application I built with an earlier version of the project at [https://github.com/verifiedninja/webapp](https://github.com/verifiedninja/webapp). There is an API version of this project at [https://github.com/josephspurrier/gowebapi](https://github.com/josephspurrier/gowebapi).
 
-To download, run the following command:
+To download and install the packages in order to start the server, run the following commands:
 
 ~~~
 go get github.com/louisl98/go-mvc
+go get github.com/louisl98/mgo
+go run main.go
 ~~~
 
 If you are on Go 1.5, you need to set GOVENDOREXPERIMENT to 1. If you are on Go 1.4 or earlier, the code will not work because it uses the vendor folder.
