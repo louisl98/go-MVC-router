@@ -1,4 +1,4 @@
-{{define "title"}}Add Post{{end}}
+{{define "title"}}Edit Post{{end}}
 {{define "head"}}{{end}}
 {{define "content"}}
 
@@ -10,13 +10,13 @@
 	<form id="form" method="post">
 		<div class="form-group">
 			<label for="post">Post</label>
-			<div><textarea rows="5" class="form-control" id="post" name="post" placeholder="Type your post here..." value="" /></textarea></div>
+			<div><textarea rows="5" class="form-control" id="post" name="post" placeholder="Type your post here..." />{{.post}}</textarea></div>
 		</div>
 		
 		<a title="Save" class="btn btn-success" role="submit" onclick="document.getElementById('form').submit();">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save
 		</a>
-		<a title="Back to Channel" class="btn btn-danger" role="button" href="{{$.BaseURI}}channel">
+		<a title="Back to Profile" class="btn btn-danger" role="button" href="{{$.BaseURI}}profile">
 			<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span> Back
 		</a>
 		

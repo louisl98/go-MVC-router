@@ -14,8 +14,8 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-// ChannelReadGET displays the posts in the channel
-func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
+// ProfileReadGET displays the posts in the profile
+func ProfileReadGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
@@ -29,26 +29,26 @@ func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "channel/channelcontent"
+	v.Name = "profile/manageposts"
 	v.Vars["username"] = sess.Values["username"]
 	v.Vars["posts"] = posts
 	v.Render(w)
 }
 
-// ChannelCreateGET displays the post creation page
-func ChannelCreateGET(w http.ResponseWriter, r *http.Request) {
+// ProfileCreateGET displays the post creation page
+func ProfileCreateGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "channel/newpost"
+	v.Name = "profile/newpost"
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Render(w)
 }
 
-// ChannelCreatePOST handles the post creation form submission
-func ChannelCreatePOST(w http.ResponseWriter, r *http.Request) {
+// ProfileCreatePOST handles the post creation form submission
+func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
@@ -56,7 +56,7 @@ func ChannelCreatePOST(w http.ResponseWriter, r *http.Request) {
 	if validate, missingField := view.Validate(r, []string{"post"}); !validate {
 		sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
 		sess.Save(r, w)
-		ChannelCreateGET(w, r)
+		ProfileCreateGET(w, r)
 		return
 	}
 
@@ -75,16 +75,16 @@ func ChannelCreatePOST(w http.ResponseWriter, r *http.Request) {
 	} else {
 		sess.AddFlash(view.Flash{"Post added!", view.FlashSuccess})
 		sess.Save(r, w)
-		http.Redirect(w, r, "/channel", http.StatusFound)
+		http.Redirect(w, r, "/profile", http.StatusFound)
 		return
 	}
 
 	// Display the same page
-	ChannelCreateGET(w, r)
+	ProfileCreateGET(w, r)
 }
 
-// ChannelUpdateGET displays the post update page
-func ChannelUpdateGET(w http.ResponseWriter, r *http.Request) {
+// ProfileUpdateGET displays the post update page
+func ProfileUpdateGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
@@ -101,20 +101,20 @@ func ChannelUpdateGET(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 		sess.Save(r, w)
-		http.Redirect(w, r, "/channel", http.StatusFound)
+		http.Redirect(w, r, "/profile", http.StatusFound)
 		return
 	}
 
 	// Display the view
 	v := view.New(r)
-	v.Name = "channel/editpost"
+	v.Name = "profile/editpost"
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Vars["post"] = post.Content
 	v.Render(w)
 }
 
-// ChannelUpdatePOST handles the post update form submission
-func ChannelUpdatePOST(w http.ResponseWriter, r *http.Request) {
+// ProfileUpdatePOST handles the post update form submission
+func ProfileUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
@@ -122,7 +122,7 @@ func ChannelUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	if validate, missingField := view.Validate(r, []string{"post"}); !validate {
 		sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
 		sess.Save(r, w)
-		ChannelUpdateGET(w, r)
+		ProfileUpdateGET(w, r)
 		return
 	}
 
@@ -145,16 +145,16 @@ func ChannelUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	} else {
 		sess.AddFlash(view.Flash{"Post updated!", view.FlashSuccess})
 		sess.Save(r, w)
-		http.Redirect(w, r, "/channel", http.StatusFound)
+		http.Redirect(w, r, "/profile", http.StatusFound)
 		return
 	}
 
 	// Display the same page
-	ChannelUpdateGET(w, r)
+	ProfileUpdateGET(w, r)
 }
 
-// ChannelDeleteGET handles the post deletion
-func ChannelDeleteGET(w http.ResponseWriter, r *http.Request) {
+// ProfileDeleteGET handles the post deletion
+func ProfileDeleteGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 
@@ -176,6 +176,6 @@ func ChannelDeleteGET(w http.ResponseWriter, r *http.Request) {
 		sess.Save(r, w)
 	}
 
-	http.Redirect(w, r, "/channel", http.StatusFound)
+	http.Redirect(w, r, "/profile", http.StatusFound)
 	return
 }

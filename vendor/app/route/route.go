@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"app/controller"
+	"app/model"
 	"app/route/middleware/acl"
 	hr "app/route/middleware/httprouterwrapper"
 	"app/route/middleware/logrequest"
@@ -85,25 +86,30 @@ func routes() *httprouter.Router {
 		New().
 		ThenFunc(controller.AboutGET)))
 
+	// Profile
+	r.GET("/profile/", hr.Handler(alice.
+		New(acl.DisallowAnon).
+		ThenFunc(controller.ProfileReadGET)))
+	r.GET("/profile/newpost", hr.Handler(alice.
+		New(acl.DisallowAnon).
+		ThenFunc(controller.ProfileCreateGET)))
+	r.POST("/profile/newpost", hr.Handler(alice.
+		New(acl.DisallowAnon).
+		ThenFunc(controller.ProfileCreatePOST)))
+	r.GET("/profile/editpost/:id", hr.Handler(alice.
+		New(acl.DisallowAnon).
+		ThenFunc(controller.ProfileUpdateGET)))
+	r.POST("/profile/editpost/:id", hr.Handler(alice.
+		New(acl.DisallowAnon).
+		ThenFunc(controller.ProfileUpdatePOST)))
+	r.GET("/profile/delete/:id", hr.Handler(alice.
+		New(acl.DisallowAnon).
+		ThenFunc(controller.ProfileDeleteGET)))
+
 	// Channel
-	r.GET("/channel/", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ChannelReadGET)))
-	r.GET("/channel/newpost", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ChannelCreateGET)))
-	r.POST("/channel/newpost", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ChannelCreatePOST)))
-	r.GET("/channel/editpost/:id", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ChannelUpdateGET)))
-	r.POST("/channel/editpost/:id", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ChannelUpdatePOST)))
-	r.GET("/channel/delete/:id", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ChannelDeleteGET)))
+	r.GET("/channel/:username", hr.Handler(alice.
+		New().
+		ThenFunc(model.ChannelReadGET)))
 
 	// Enable Pprof
 	r.GET("/debug/pprof/*pprof", hr.Handler(alice.

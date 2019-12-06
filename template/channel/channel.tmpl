@@ -1,0 +1,20 @@
+{{define "title"}}@{{.username}}'s channel{{end}}
+{{define "head"}}{{end}}
+{{define "content"}}
+<div class="container">
+	<div class="page-header">
+		<h1>@{{.username}}</h1>
+	</div>
+	
+	{{range $n := .posts}}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<p>{{.Content}}</p>
+				<span class="pull-right" style="margin-top: 14px;">{{.UpdatedAt | PRETTYTIME}}</span>
+			</div>
+		</div>
+	{{end}}
+	{{template "footer" .}}
+</div>
+{{end}}
+{{define "foot"}}{{end}}
