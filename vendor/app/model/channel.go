@@ -1,7 +1,6 @@
 package model
 
 import (
-	
 	"app/shared/database"
 	"app/shared/view"
 	"log"
@@ -31,6 +30,7 @@ func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Println(err)
+		return
 	}
 
 	channel = Channel{}
