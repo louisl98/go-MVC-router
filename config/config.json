@@ -1,6 +1,6 @@
 {
 	"Database": {
-		"Type": "MySQL",
+		"Type": "Bolt",
 		"Bolt": {		
  			"Path": "gowebapp.db"
   		},
