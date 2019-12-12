@@ -2,6 +2,7 @@ package model
 
 import (
 	"app/shared/database"
+	"app/shared/session"
 	"app/shared/view"
 	"log"
 	"net/http"
@@ -24,22 +25,25 @@ type Channel struct {
 func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
 
 	request := r.RequestURI
-	var username = strings.Trim(request, "/channel/")
+	var channeltitle = strings.Trim(request, "/channel/")
 
-	channel, err := ChannelByUsername(username)
+	channel, err := ChannelByUsername(channeltitle)
 
 	if err != nil {
 		log.Println(err)
-		return
+		http.Redirect(w, r, "/404", 301)
 	}
 
 	channel = Channel{}
+
+	sess := session.Instance(r)
 
 	// Display the view
 	v := view.New(r)
 	v.Name = "channel/channel"
 	v.Vars["channel"] = channel
-	v.Vars["username"] = username
+	v.Vars["channeltitle"] = channeltitle
+	v.Vars["username"] = sess.Values["username"]
 	v.Render(w)
 }
 
@@ -72,4 +76,15 @@ func ChannelByUsername(username string) (Channel, error) {
 	}
 
 	return result, standardizeError(err)
+}
+
+// IsOwnChannel checks if channel belongs to current user
+func IsOwnChannel(channeltitle string, r *http.Request) bool {
+	channeltitle := strings.Trim(r.RequestURI, "/channel/")
+	if channeltitle = session.Instance(r).username {
+		return true
+	}
+	else {
+		return false
+	}
 }

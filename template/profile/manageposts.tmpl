@@ -1,13 +1,15 @@
-{{define "title"}}{{.username}} - edit posts &#38; videos{{end}}
+{{define "title"}}@{{.username}} - edit posts &#38; videos{{end}}
 {{define "head"}}{{end}}
 {{define "content"}}
 <div class="container">
 	<div class="page-header">
-		<h1>{{.username}}</h1>
-		<a href="/channel/{{.username}}">View live</a>
+		<h1>@{{.username}}</h1>
 	</div>
 	<p>
-		<a title="Add Post" class="btn btn-primary" role="button" href="{{$.BaseURI}}profile/newPost">
+		<a title="View live" class="btn btn-info" role="button" href="/channel/{{.username}}">
+			<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View live
+		</a>
+		<a title="New post" class="btn btn-primary" role="button" href="{{$.BaseURI}}profile/newPost">
 			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New post
 		</a>
 	</p>
