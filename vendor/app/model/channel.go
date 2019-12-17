@@ -78,7 +78,7 @@ func ChannelByUsername(username string) (Channel, error) {
 	return result, standardizeError(err)
 }
 
-// IsOwnChannel checks if channel belongs to current user
+/* IsOwnChannel checks if channel belongs to current user
 func IsOwnChannel(channeltitle string, r *http.Request) bool {
 	channeltitle := strings.Trim(r.RequestURI, "/channel/")
 	if channeltitle = session.Instance(r).username {
@@ -87,4 +87,4 @@ func IsOwnChannel(channeltitle string, r *http.Request) bool {
 	else {
 		return false
 	}
-}
+} */
