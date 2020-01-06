@@ -1,6 +1,6 @@
 {
 	"Database": {
-		"Type": "Bolt",
+		"Type": "MySQL",
 		"Bolt": {		
  			"Path": "gowebapp.db"
   		},
@@ -13,7 +13,7 @@
 			"Password": "root",
 			"Name": "gowebapp",
 			"Hostname": "127.0.0.1",
-			"Port": 8889,
+			"Port": 3306,
 			"Parameter": "?parseTime=true"
 		}
 	},
@@ -33,7 +33,7 @@
 		"Hostname": "",
 		"UseHTTP": true,
 		"UseHTTPS": false,
-		"HTTPPort": 80,
+		"HTTPPort": 5555,
 		"HTTPSPort": 443,
 		"CertFile": "tls/server.crt",
 		"KeyFile": "tls/server.key"
