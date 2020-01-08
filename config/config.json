@@ -13,7 +13,7 @@
 			"Password": "root",
 			"Name": "gowebapp",
 			"Hostname": "127.0.0.1",
-			"Port": 3306,
+			"Port": 8889,
 			"Parameter": "?parseTime=true"
 		}
 	},
