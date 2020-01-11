@@ -7,7 +7,6 @@
 		<p>Member since : {{.creationdate}}</p>
 		<p>Last seen : {{.lastseen}}</p>
 	</div>
-	
 	{{range $n := .posts}}
 		<div class="panel panel-default">
 			<div class="panel-body">
@@ -15,6 +14,8 @@
 				<span class="pull-right" style="margin-top: 14px;">{{.UpdatedAt | PRETTYTIME}}</span>
 			</div>
 		</div>
+	{{else}}
+	<p>No posts yet.</p>
 	{{end}}
 	{{template "footer" .}}
 </div>
