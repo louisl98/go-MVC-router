@@ -18,62 +18,36 @@ import (
 type Channel struct {
 	ID        uint32    `db:"id" bson:"id,omitempty"` // Don't use Id, use UserID() instead for consistency with MongoDB
 	Username  string    `db:"username" bson:"username"`
+	Email     string    `db:"email" bson:"email"`
 	CreatedAt time.Time `db:"created_at" bson:"created_at"`
+	UpdatedAt time.Time `db:"updated_at" bson:"updated_at"`
 }
 
-// ChannelReadGET displays the data on the channel page
+// ChannelByUsername gets channel information from username
+func ChannelByUsername(username string) (Channel, error) {
+	var err error
+	result := Channel{}
+	err = database.SQL.Get(&result, "SELECT id, username, email, created_at, updated_at FROM user WHERE username = ? LIMIT 1", username)
+	return result, standardizeError(err)
+}
+
+// ChannelReadGET gets the query and displays the channel
 func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
-
-	request := r.RequestURI
-	var channeltitle = strings.Trim(request, "/channel/")
-
-	channel, err := ChannelByUsername(channeltitle)
-
+	uri := r.RequestURI
+	var request = strings.Trim(uri, "/channel/")
+	// Check if user exists
+	channel, err := ChannelByUsername(request)
 	if err != nil {
 		log.Println(err)
 		http.Redirect(w, r, "/404", 301)
 	}
-
-	channel = Channel{}
-
 	sess := session.Instance(r)
-
 	// Display the view
 	v := view.New(r)
 	v.Name = "channel/channel"
-	v.Vars["channel"] = channel
-	v.Vars["channeltitle"] = channeltitle
-	v.Vars["username"] = sess.Values["username"]
+	v.Vars["username"] = request
+	v.Vars["loggeduser"] = sess.Values["username"]
+	v.Vars["creationdate"] = channel.CreatedAt
+	v.Vars["lastseen"] = channel.UpdatedAt
 	v.Render(w)
-}
-
-// ChannelByUsername gets the channel by username
-func ChannelByUsername(username string) (Channel, error) {
-	var err error
-
-	result := Channel{}
-
-	switch database.ReadConfig().Type {
-	case database.TypeMySQL:
-		err = database.SQL.Get(&result, "SELECT id, username, created_at FROM user WHERE username = ?  LIMIT 1", username)
-	case database.TypeMongoDB:
-		if database.CheckConnection() {
-			// Create a copy of mongo
-			session := database.Mongo.Copy()
-			defer session.Close()
-			result = Channel{}
-		} else {
-			err = ErrUnavailable
-		}
-	case database.TypeBolt:
-		err = database.View("user", username, &result)
-		if err != nil {
-			err = ErrNoResult
-		}
-		result = Channel{}
-	default:
-		err = ErrCode
-	}
-
-	return result, standardizeError(err)
 }
