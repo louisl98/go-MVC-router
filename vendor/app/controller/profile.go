@@ -39,6 +39,7 @@ func ProfileCreateGET(w http.ResponseWriter, r *http.Request) {
 	// Display the view
 	v := view.New(r)
 	v.Name = "profile/newpost"
+	v.Vars["username"] = sess.Values["username"]
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Render(w)
 }
@@ -96,6 +97,7 @@ func ProfileUpdateGET(w http.ResponseWriter, r *http.Request) {
 	// Display the view
 	v := view.New(r)
 	v.Name = "profile/editpost"
+	v.Vars["username"] = sess.Values["username"]
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Vars["post"] = post.Content
 	v.Render(w)

@@ -24,3 +24,14 @@ h1, h2, h3, h4, h5, h6 {
 .alert-box-fixed {
   margin: 0 15px 15px 0;
 }
+
+#navbar{
+  text-align: center;
+}
+
+.search{
+  position: relative;
+  top: 12px;
+  display: unset;
+  width: unset;
+}

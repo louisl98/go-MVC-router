@@ -53,3 +53,9 @@ function flashWarning(message) {
 	var flash = [{Class: "alert-warning", Message: message}];
 	showFlash(flash);
 }
+
+function search(e) {
+    if(event.key === 'Enter') {
+        window.location.href = "/about";       
+    }
+}

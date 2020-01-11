@@ -111,6 +111,11 @@ func routes() *httprouter.Router {
 		New().
 		ThenFunc(model.ChannelReadGET)))
 
+	// Search
+	r.GET("/search/:username", hr.Handler(alice.
+		New().
+		ThenFunc(model.SearchReadGET)))
+
 	// Enable Pprof
 	r.GET("/debug/pprof/*pprof", hr.Handler(alice.
 		New(acl.DisallowAnon).

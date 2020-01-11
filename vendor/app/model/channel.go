@@ -57,8 +57,8 @@ func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
 	// Display the view
 	v := view.New(r)
 	v.Name = "channel/channel"
-	v.Vars["username"] = request
-	v.Vars["loggeduser"] = sess.Values["username"]
+	v.Vars["title"] = request
+	v.Vars["username"] = sess.Values["username"]
 	v.Vars["creationdate"] = channel.CreatedAt
 	v.Vars["lastseen"] = channel.UpdatedAt
 	v.Vars["posts"] = posts

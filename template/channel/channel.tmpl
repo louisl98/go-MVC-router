@@ -1,9 +1,9 @@
-{{define "title"}}@{{.username}}'s channel{{end}}
+{{define "title"}}@{{.title}}'s channel{{end}}
 {{define "head"}}{{end}}
 {{define "content"}}
 <div class="container">
 	<div class="page-header">
-		<h1>@{{.username}}</h1>
+		<h1>@{{.title}}</h1>
 		<p>Member since : {{.creationdate}}</p>
 		<p>Last seen : {{.lastseen}}</p>
 	</div>
