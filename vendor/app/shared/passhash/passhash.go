@@ -10,7 +10,6 @@ func HashString(password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return string(key), nil
 }
 
@@ -20,7 +19,6 @@ func HashBytes(password []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return key, nil
 }
 
@@ -30,7 +28,6 @@ func MatchString(hash, password string) bool {
 	if err == nil {
 		return true
 	}
-
 	return false
 }
 
@@ -40,6 +37,5 @@ func MatchBytes(hash, password []byte) bool {
 	if err == nil {
 		return true
 	}
-
 	return false
 }

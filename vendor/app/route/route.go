@@ -46,76 +46,32 @@ func redirectToHTTPS(w http.ResponseWriter, req *http.Request) {
 
 func routes() *httprouter.Router {
 	r := httprouter.New()
-
 	// Set 404 handler
-	r.NotFound = alice.
-		New().
-		ThenFunc(controller.Error404)
-
+	r.NotFound = alice.New().ThenFunc(controller.Error404)
 	// Serve static files, no directory browsing
-	r.GET("/static/*filepath", hr.Handler(alice.
-		New().
-		ThenFunc(controller.Static)))
-
+	r.GET("/static/*filepath", hr.Handler(alice.New().ThenFunc(controller.Static)))
 	// Home page
-	r.GET("/", hr.Handler(alice.
-		New().
-		ThenFunc(controller.IndexGET)))
-
+	r.GET("/", hr.Handler(alice.New().ThenFunc(controller.IndexGET)))
 	// Login
-	r.GET("/login", hr.Handler(alice.
-		New(acl.DisallowAuth).
-		ThenFunc(controller.LoginGET)))
-	r.POST("/login", hr.Handler(alice.
-		New(acl.DisallowAuth).
-		ThenFunc(controller.LoginPOST)))
-	r.GET("/logout", hr.Handler(alice.
-		New().
-		ThenFunc(controller.LogoutGET)))
-
+	r.GET("/login", hr.Handler(alice.New(acl.DisallowAuth).ThenFunc(controller.LoginGET)))
+	r.POST("/login", hr.Handler(alice.New(acl.DisallowAuth).ThenFunc(controller.LoginPOST)))
+	r.GET("/logout", hr.Handler(alice.New().ThenFunc(controller.LogoutGET)))
 	// Register
-	r.GET("/register", hr.Handler(alice.
-		New(acl.DisallowAuth).
-		ThenFunc(controller.RegisterGET)))
-	r.POST("/register", hr.Handler(alice.
-		New(acl.DisallowAuth).
-		ThenFunc(controller.RegisterPOST)))
-
+	r.GET("/register", hr.Handler(alice.New(acl.DisallowAuth).ThenFunc(controller.RegisterGET)))
+	r.POST("/register", hr.Handler(alice.New(acl.DisallowAuth).ThenFunc(controller.RegisterPOST)))
 	// About
-	r.GET("/about", hr.Handler(alice.
-		New().
-		ThenFunc(controller.AboutGET)))
-
+	r.GET("/about", hr.Handler(alice.New().ThenFunc(controller.AboutGET)))
 	// Profile
-	r.GET("/profile/", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ProfileReadGET)))
-	r.GET("/profile/newpost", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ProfileCreateGET)))
-	r.POST("/profile/newpost", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ProfileCreatePOST)))
-	r.GET("/profile/editpost/:id", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ProfileUpdateGET)))
-	r.POST("/profile/editpost/:id", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ProfileUpdatePOST)))
-	r.GET("/profile/delete/:id", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(controller.ProfileDeleteGET)))
-
+	r.GET("/profile/", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileReadGET)))
+	r.GET("/profile/newpost", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileCreateGET)))
+	r.POST("/profile/newpost", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileCreatePOST)))
+	r.GET("/profile/editpost/:id", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileUpdateGET)))
+	r.POST("/profile/editpost/:id", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileUpdatePOST)))
+	r.GET("/profile/delete/:id", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileDeleteGET)))
 	// Channel
-	r.GET("/channel/:username", hr.Handler(alice.
-		New().
-		ThenFunc(model.ChannelReadGET)))
-
+	r.GET("/channel/:username", hr.Handler(alice.New().ThenFunc(model.ChannelReadGET)))
 	// Enable Pprof
-	r.GET("/debug/pprof/*pprof", hr.Handler(alice.
-		New(acl.DisallowAnon).
-		ThenFunc(pprofhandler.Handler)))
-
+	r.GET("/debug/pprof/*pprof", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(pprofhandler.Handler)))
 	return r
 }
 
@@ -133,12 +89,9 @@ func middleware(h http.Handler) http.Handler {
 	csrfbanana.TokenName = "token"
 	csrfbanana.SingleToken = false
 	h = cs
-
 	// Log every request
 	h = logrequest.Handler(h)
-
 	// Clear handler for Gorilla Context
 	h = context.ClearHandler(h)
-
 	return h
 }

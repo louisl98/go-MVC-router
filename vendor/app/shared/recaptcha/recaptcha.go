@@ -33,7 +33,6 @@ func Verified(r *http.Request) bool {
 	if !recap.Enabled {
 		return true
 	}
-
 	// Check the reCaptcha
 	re := recaptcha.R{
 		Secret: recap.Secret,
@@ -44,7 +43,6 @@ func Verified(r *http.Request) bool {
 // Plugin returns a map of functions that are usable in templates
 func Plugin() template.FuncMap {
 	f := make(template.FuncMap)
-
 	f["RECAPTCHA_SITEKEY"] = func() template.HTML {
 		if ReadConfig().Enabled {
 			return template.HTML(ReadConfig().SiteKey)
@@ -52,6 +50,5 @@ func Plugin() template.FuncMap {
 
 		return template.HTML("")
 	}
-
 	return f
 }

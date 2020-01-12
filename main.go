@@ -17,7 +17,6 @@ import (
 	"app/shared/view/plugin"
 )
 
-
 // *****************************************************************************
 // Application Logic
 // *****************************************************************************
@@ -25,7 +24,6 @@ import (
 func init() {
 	// Verbose logging with file name and line number
 	log.SetFlags(log.Lshortfile)
-
 	// Use all CPU cores
 	runtime.GOMAXPROCS(runtime.NumCPU())
 }
@@ -33,16 +31,12 @@ func init() {
 func main() {
 	// Load the configuration file
 	jsonconfig.Load("config"+string(os.PathSeparator)+"config.json", config)
-
 	// Configure the session cookie store
 	session.Configure(config.Session)
-
 	// Connect to database
 	database.Connect(config.Database)
-
 	// Configure the Google reCAPTCHA prior to loading view plugins
 	recaptcha.Configure(config.Recaptcha)
-
 	// Setup the views
 	view.Configure(config.View)
 	view.LoadTemplates(config.Template.Root, config.Template.Children)
@@ -51,7 +45,6 @@ func main() {
 		plugin.NoEscape(),
 		plugin.PrettyTime(),
 		recaptcha.Plugin())
-
 	// Start the listener
 	server.Run(route.LoadHTTP(), route.LoadHTTPS(), config.Server)
 }

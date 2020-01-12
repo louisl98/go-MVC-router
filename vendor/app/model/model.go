@@ -3,8 +3,6 @@ package model
 import (
 	"database/sql"
 	"errors"
-
-	"gopkg.in/mgo.v2"
 )
 
 var (
@@ -20,9 +18,8 @@ var (
 
 // standardizeErrors returns the same error regardless of the database used
 func standardizeError(err error) error {
-	if err == sql.ErrNoRows || err == mgo.ErrNotFound {
+	if err == sql.ErrNoRows {
 		return ErrNoResult
 	}
-
 	return err
 }
