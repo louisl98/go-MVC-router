@@ -1,4 +1,4 @@
-module github.com/louisl98/go-mvc/vendor
+module github.com/louisl98/go-mvc
 
 go 1.13
 
