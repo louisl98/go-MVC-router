@@ -1,9 +1,9 @@
-{{define "title"}}@{{.username}} - edit posts &#38; videos{{end}}
+{{define "title"}}{{.username}} - edit posts &#38; videos{{end}}
 {{define "head"}}{{end}}
 {{define "content"}}
 <div class="container">
 	<div class="page-header">
-		<h1>@{{.username}}</h1>
+		<h1>{{.username}}</h1>
 	</div>
 	<p>
 		<a title="View live" class="btn btn-info" role="button" href="/channel/{{.username}}">

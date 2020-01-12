@@ -1,14 +1,19 @@
 package controller
 
 import (
+	"app/shared/session"
+	"app/shared/view"
 	"fmt"
 	"net/http"
 )
 
 // Error404 handles 404 - Page Not Found
 func Error404(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-	fmt.Fprint(w, "Not Found 404")
+	v := view.New(r)
+	v.Name = "404/404"
+	sess := session.Instance(r)
+	v.Vars["username"] = sess.Values["username"]
+	v.Render(w)
 }
 
 // Error500 handles 500 - Internal Server Error

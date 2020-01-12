@@ -56,6 +56,6 @@ function flashWarning(message) {
 
 function search(e) {
     if(event.key === 'Enter') {
-        window.location.href = "/about";       
+        window.location.href = "/channel/"+e.value;       
     }
 }
