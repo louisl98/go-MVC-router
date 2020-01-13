@@ -1,13 +1,6 @@
 {
 	"Database": {
 		"Type": "MySQL",
-		"Bolt": {		
- 			"Path": "gowebapp.db"
-  		},
-		"MongoDB": {
-			"URL": "127.0.0.1",
-			"Database": "gowebapp"
-		},
 		"MySQL": {
 			"Username": "root",
 			"Password": "root",

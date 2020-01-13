@@ -30,8 +30,7 @@ var (
 	// FlashNotice is a bootstrap class
 	FlashNotice = "alert-info"
 	// FlashWarning is a bootstrap class
-	FlashWarning = "alert-warning"
-
+	FlashWarning       = "alert-warning"
 	childTemplates     []string
 	rootTemplate       string
 	templateCollection = make(map[string]*template.Template)
@@ -87,7 +86,6 @@ func LoadTemplates(rootTemp string, childTemps []string) {
 func LoadPlugins(fms ...template.FuncMap) {
 	// Final FuncMap
 	fm := make(template.FuncMap)
-
 	// Loop through the maps
 	for _, m := range fms {
 		// Loop through each key and value
@@ -95,7 +93,6 @@ func LoadPlugins(fms ...template.FuncMap) {
 			fm[k] = v
 		}
 	}
-
 	// Load the plugins
 	mutexPlugins.Lock()
 	pluginCollection = fm
@@ -112,26 +109,20 @@ func New(req *http.Request) *View {
 	v := &View{}
 	v.Vars = make(map[string]interface{})
 	v.Vars["AuthLevel"] = "anon"
-
 	v.BaseURI = viewInfo.BaseURI
 	v.Extension = viewInfo.Extension
 	v.Folder = viewInfo.Folder
 	v.Name = viewInfo.Name
-
 	// Make sure BaseURI is available in the templates
 	v.Vars["BaseURI"] = v.BaseURI
-
 	// This is required for the view to access the request
 	v.request = req
-
 	// Get session
 	sess := session.Instance(v.request)
-
 	// Set the AuthLevel to auth if the user is logged in
 	if sess.Values["id"] != nil {
 		v.Vars["AuthLevel"] = "auth"
 	}
-
 	return v
 }
 
@@ -142,43 +133,34 @@ func (v *View) AssetTimePath(s string) (string, error) {
 	if strings.HasPrefix(s, "//") {
 		return s, nil
 	}
-
 	s = strings.TrimLeft(s, "/")
 	abs, err := filepath.Abs(s)
-
 	if err != nil {
 		return "", err
 	}
-
 	time, err2 := FileTime(abs)
 	if err2 != nil {
 		return "", err2
 	}
-
 	return v.PrependBaseURI(s + "?" + time), nil
 }
 
 // RenderSingle renders a template to the writer
 func (v *View) RenderSingle(w http.ResponseWriter) {
-
 	// Get the template collection from cache
 	/*mutex.RLock()
 	tc, ok := templateCollection[v.Name]
 	mutex.RUnlock()*/
-
 	// Get the plugin collection
 	mutexPlugins.RLock()
 	pc := pluginCollection
 	mutexPlugins.RUnlock()
-
 	templateList := []string{v.Name}
-
 	// List of template names
 	/*templateList := make([]string, 0)
 	templateList = append(templateList, rootTemplate)
 	templateList = append(templateList, v.Name)
 	templateList = append(templateList, childTemplates...)*/
-
 	// Loop through each template and test the full path
 	for i, name := range templateList {
 		// Get the absolute path of the root template
@@ -189,26 +171,20 @@ func (v *View) RenderSingle(w http.ResponseWriter) {
 		}
 		templateList[i] = path
 	}
-
 	// Determine if there is an error in the template syntax
 	templates, err := template.New(v.Name).Funcs(pc).ParseFiles(templateList...)
-
 	if err != nil {
 		http.Error(w, "Template Parse Error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	// Cache the template collection
 	/*mutex.Lock()
 	templateCollection[v.Name] = templates
 	mutex.Unlock()*/
-
 	// Save the template collection
 	tc := templates
-
 	// Get session
 	sess := session.Instance(v.request)
-
 	// Get the flashes for the template
 	if flashes := sess.Flashes(); len(flashes) > 0 {
 		v.Vars["flashes"] = make([]Flash, len(flashes))
@@ -219,14 +195,11 @@ func (v *View) RenderSingle(w http.ResponseWriter) {
 			default:
 				v.Vars["flashes"].([]Flash)[i] = Flash{f.(string), "alert-box"}
 			}
-
 		}
 		sess.Save(v.request, w)
 	}
-
 	// Display the content to the screen
 	err = tc.Funcs(pc).ExecuteTemplate(w, v.Name+"."+v.Extension, v.Vars)
-
 	if err != nil {
 		http.Error(w, "Template File Error: "+err.Error(), http.StatusInternalServerError)
 	}
@@ -234,26 +207,21 @@ func (v *View) RenderSingle(w http.ResponseWriter) {
 
 // Render renders a template to the writer
 func (v *View) Render(w http.ResponseWriter) {
-
 	// Get the template collection from cache
 	mutex.RLock()
 	tc, ok := templateCollection[v.Name]
 	mutex.RUnlock()
-
 	// Get the plugin collection
 	mutexPlugins.RLock()
 	pc := pluginCollection
 	mutexPlugins.RUnlock()
-
 	// If the template collection is not cached or caching is disabled
 	if !ok || !viewInfo.Caching {
-
 		// List of template names
 		var templateList []string
 		templateList = append(templateList, rootTemplate)
 		templateList = append(templateList, v.Name)
 		templateList = append(templateList, childTemplates...)
-
 		// Loop through each template and test the full path
 		for i, name := range templateList {
 			// Get the absolute path of the root template
@@ -264,27 +232,21 @@ func (v *View) Render(w http.ResponseWriter) {
 			}
 			templateList[i] = path
 		}
-
 		// Determine if there is an error in the template syntax
 		templates, err := template.New(v.Name).Funcs(pc).ParseFiles(templateList...)
-
 		if err != nil {
 			http.Error(w, "Template Parse Error: "+err.Error(), http.StatusInternalServerError)
 			return
 		}
-
 		// Cache the template collection
 		mutex.Lock()
 		templateCollection[v.Name] = templates
 		mutex.Unlock()
-
 		// Save the template collection
 		tc = templates
 	}
-
 	// Get session
 	sess := session.Instance(v.request)
-
 	// Get the flashes for the template
 	if flashes := sess.Flashes(); len(flashes) > 0 {
 		v.Vars["flashes"] = make([]Flash, len(flashes))
@@ -295,14 +257,11 @@ func (v *View) Render(w http.ResponseWriter) {
 			default:
 				v.Vars["flashes"].([]Flash)[i] = Flash{f.(string), "alert-box"}
 			}
-
 		}
 		sess.Save(v.request, w)
 	}
-
 	// Display the content to the screen
 	err := tc.Funcs(pc).ExecuteTemplate(w, rootTemplate+"."+v.Extension, v.Vars)
-
 	if err != nil {
 		http.Error(w, "Template File Error: "+err.Error(), http.StatusInternalServerError)
 	}
@@ -315,7 +274,6 @@ func Validate(req *http.Request, required []string) (bool, string) {
 			return false, v
 		}
 	}
-
 	return true, ""
 }
 
@@ -323,16 +281,13 @@ func Validate(req *http.Request, required []string) (bool, string) {
 func (v *View) SendFlashes(w http.ResponseWriter) {
 	// Get session
 	sess := session.Instance(v.request)
-
 	flashes := peekFlashes(w, v.request)
 	sess.Save(v.request, w)
-
 	js, err := json.Marshal(flashes)
 	if err != nil {
 		http.Error(w, "JSON Error: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
 }
@@ -340,9 +295,7 @@ func (v *View) SendFlashes(w http.ResponseWriter) {
 func peekFlashes(w http.ResponseWriter, r *http.Request) []Flash {
 	// Get session
 	sess := session.Instance(r)
-
 	var v []Flash
-
 	// Get the flashes for the template
 	if flashes := sess.Flashes(); len(flashes) > 0 {
 		v = make([]Flash, len(flashes))
@@ -353,10 +306,8 @@ func peekFlashes(w http.ResponseWriter, r *http.Request) []Flash {
 			default:
 				v[i] = Flash{f.(string), "alert-box"}
 			}
-
 		}
 	}
-
 	return v
 }
 

@@ -32,7 +32,6 @@ func ReadConfig() SMTPInfo {
 // SendEmail sends an email
 func SendEmail(to, subject, body string) error {
 	auth := smtp.PlainAuth("", e.Username, e.Password, e.Hostname)
-
 	header := make(map[string]string)
 	header["From"] = e.From
 	header["To"] = to
@@ -40,13 +39,11 @@ func SendEmail(to, subject, body string) error {
 	header["MIME-Version"] = "1.0"
 	header["Content-Type"] = `text/plain; charset="utf-8"`
 	header["Content-Transfer-Encoding"] = "base64"
-
 	message := ""
 	for k, v := range header {
 		message += fmt.Sprintf("%s: %s\r\n", k, v)
 	}
 	message += "\r\n" + base64.StdEncoding.EncodeToString([]byte(body))
-
 	// Send the email
 	err := smtp.SendMail(
 		fmt.Sprintf("%s:%d", e.Hostname, e.Port),
@@ -55,6 +52,5 @@ func SendEmail(to, subject, body string) error {
 		[]string{to},
 		[]byte(message),
 	)
-
 	return err
 }

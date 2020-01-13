@@ -24,7 +24,6 @@ func Run(httpHandlers http.Handler, httpsHandlers http.Handler, s Server) {
 		go func() {
 			startHTTPS(httpsHandlers, s)
 		}()
-
 		startHTTP(httpHandlers, s)
 	} else if s.UseHTTP {
 		startHTTP(httpHandlers, s)
@@ -38,7 +37,6 @@ func Run(httpHandlers http.Handler, httpsHandlers http.Handler, s Server) {
 // startHTTP starts the HTTP listener
 func startHTTP(handlers http.Handler, s Server) {
 	fmt.Println(time.Now().Format("2006-01-02 03:04:05 PM"), "Running HTTP "+httpAddress(s))
-
 	// Start the HTTP listener
 	log.Fatal(http.ListenAndServe(httpAddress(s), handlers))
 }
@@ -46,7 +44,6 @@ func startHTTP(handlers http.Handler, s Server) {
 // startHTTPs starts the HTTPS listener
 func startHTTPS(handlers http.Handler, s Server) {
 	fmt.Println(time.Now().Format("2006-01-02 03:04:05 PM"), "Running HTTPS "+httpsAddress(s))
-
 	// Start the HTTPS listener
 	log.Fatal(http.ListenAndServeTLS(httpsAddress(s), s.CertFile, s.KeyFile, handlers))
 }

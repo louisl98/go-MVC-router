@@ -33,7 +33,6 @@ func loginAttempt(sess *sessions.Session) {
 func LoginGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
-
 	// Display the view
 	v := view.New(r)
 	v.Name = "login/login"
@@ -47,7 +46,6 @@ func LoginGET(w http.ResponseWriter, r *http.Request) {
 func LoginPOST(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
-
 	// Prevent brute force login attempts by not hitting MySQL and pretending like it was invalid :-)
 	if sess.Values[sessLoginAttempt] != nil && sess.Values[sessLoginAttempt].(int) >= 5 {
 		log.Println("Brute force login prevented")
@@ -56,7 +54,6 @@ func LoginPOST(w http.ResponseWriter, r *http.Request) {
 		LoginGET(w, r)
 		return
 	}
-
 	// Validate with required fields
 	if validate, missingField := view.Validate(r, []string{"email", "password"}); !validate {
 		sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
@@ -64,14 +61,11 @@ func LoginPOST(w http.ResponseWriter, r *http.Request) {
 		LoginGET(w, r)
 		return
 	}
-
 	// Form values
 	email := r.FormValue("email")
 	password := r.FormValue("password")
-
 	// Get database result
 	result, err := model.UserByEmail(email)
-
 	// Determine if user exists
 	if err == model.ErrNoResult {
 		loginAttempt(sess)
@@ -103,7 +97,6 @@ func LoginPOST(w http.ResponseWriter, r *http.Request) {
 		sess.AddFlash(view.Flash{"Password is incorrect - Attempt: " + fmt.Sprintf("%v", sess.Values[sessLoginAttempt]), view.FlashWarning})
 		sess.Save(r, w)
 	}
-
 	// Show the login page again
 	LoginGET(w, r)
 }
@@ -112,13 +105,11 @@ func LoginPOST(w http.ResponseWriter, r *http.Request) {
 func LogoutGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
-
 	// If user is authenticated
 	if sess.Values["id"] != nil {
 		session.Empty(sess)
 		sess.AddFlash(view.Flash{"Goodbye!", view.FlashNotice})
 		sess.Save(r, w)
 	}
-
 	http.Redirect(w, r, "/", http.StatusFound)
 }
