@@ -64,3 +64,37 @@ func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
 	v.Vars["posts"] = posts
 	v.Render(w)
 }
+<<<<<<< HEAD
+
+// ChannelByUsername gets the channel by username
+func ChannelByUsername(username string) (Channel, error) {
+	var err error
+
+	result := Channel{}
+
+	switch database.ReadConfig().Type {
+	case database.TypeMySQL:
+		err = database.SQL.Get(&result, "SELECT id, username, created_at FROM user WHERE username = ?  LIMIT 1", username)
+	case database.TypeMongoDB:
+		if database.CheckConnection() {
+			// Create a copy of mongo
+			session := database.Mongo.Copy()
+			defer session.Close()
+			result = Channel{}
+		} else {
+			err = ErrUnavailable
+		}
+	case database.TypeBolt:
+		err = database.View("user", username, &result)
+		if err != nil {
+			err = ErrNoResult
+		}
+		result = Channel{}
+	default:
+		err = ErrCode
+	}
+
+	return result, standardizeError(err)
+}
+=======
+>>>>>>> 9c7a11885182d87ab8517d8575d2634674825124
