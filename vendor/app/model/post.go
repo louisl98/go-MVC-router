@@ -23,8 +23,7 @@ type Post struct {
 
 // PostID returns the post id
 func (u *Post) PostID() string {
-	r := ""
-	r = fmt.Sprintf("%v", u.ID)
+	r := fmt.Sprintf("%v", u.ID)
 	return r
 }
 

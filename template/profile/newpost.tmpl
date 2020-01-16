@@ -7,20 +7,18 @@
 		<h1>{{template "title" .}}</h1>
 	</div>
 	
-	<form id="form" method="post">
+	<form enctype="multipart/form-data" id="form" method="post">
 		<div class="form-group">
 			<label for="post">Post</label>
 			<div><textarea rows="5" class="form-control" id="post" name="post" placeholder="Type your post here..." value="" /></textarea></div>
-			<input class="upload" name="myFile" type="file">
+			<input class="upload" name="uploadfile" type="file">
 		</div>
-		
-		<a title="Save" class="btn btn-success" role="submit" onclick="document.getElementById('form').submit();">
+		<a title="Save" class="btn btn-success" name="upload" role="submit" onclick="document.getElementById('form').submit();">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save
 		</a>
 		<a title="Back to Profile" class="btn btn-danger" role="button" href="{{$.BaseURI}}profile">
 			<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span> Back
 		</a>
-		
 		<input type="hidden" name="token" value="{{.token}}">
 	</form>
 	

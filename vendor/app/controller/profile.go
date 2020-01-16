@@ -55,11 +55,9 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 		ProfileCreateGET(w, r)
 		return
 	}
-
 	// Get form values
 	content := r.FormValue("post")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
-	// Get database result
 	err := model.PostCreate(content, userID)
 	// Will only error if there is a problem with the query
 	if err != nil {
