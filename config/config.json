@@ -2,11 +2,11 @@
 	"Database": {
 		"Type": "MySQL",
 		"MySQL": {
-			"Username": "root",
-			"Password": "root",
-			"Name": "gowebapp",
-			"Hostname": "127.0.0.1",
-			"Port": 8889,
+			"Username": "r0jzj3v9piw2gxd7",
+			"Password": "dni4nrhkpdzndav5",
+			"Name": "f0vcwq89h3lsit9a",
+			"Hostname": "nr84dudlpkazpylz.chr7pe7iynqr.eu-west-1.rds.amazonaws.com",
+			"Port": 3306,
 			"Parameter": "?parseTime=true"
 		}
 	},

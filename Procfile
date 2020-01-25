@@ -1,1 +1,1 @@
-web: go-mvc
+web: go run main.go
