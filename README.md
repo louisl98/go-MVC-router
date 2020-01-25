@@ -1,4 +1,4 @@
-MVC Web Application in Go
+## MVC Web Application in Go
 
 To download and install the packages all at once:
 ~~~
