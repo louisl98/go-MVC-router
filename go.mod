@@ -1,3 +1,3 @@
 module github.com/louisl98/go-mvc
 
-go 1.13.6
+go 1.13
