@@ -62,3 +62,4 @@ func PostDelete(userID string, postID string) error {
 	_, err = database.SQL.Exec("DELETE FROM post WHERE id = ? AND user_id = ?", postID, userID)
 	return standardizeError(err)
 }
+
