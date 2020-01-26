@@ -57,9 +57,16 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	}
 	// Get form values
 	content := r.FormValue("post")
+	_, handler, e := r.FormFile("upload")
+	var file string
+	if e != nil {
+		log.Println(e)
+		file = ""
+	}
+	file = handler.Filename
 	userID := fmt.Sprintf("%s", sess.Values["id"])
 	UploadFile(w, r)
-	err := model.PostCreate(content, userID)
+	err := model.PostCreate(content, file, userID)
 	// Will only error if there is a problem with the query
 	if err != nil {
 		log.Println(err)

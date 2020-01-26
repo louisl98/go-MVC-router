@@ -15,6 +15,7 @@ import (
 type Post struct {
 	ID        uint32    `db:"id"`
 	Content   string    `db:"content"`
+	File	  string    `db:"file_name"`
 	UID       uint32    `db:"user_id"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
@@ -44,9 +45,9 @@ func PostsByUserID(userID string) ([]Post, error) {
 }
 
 // PostCreate creates a post
-func PostCreate(content string, userID string) error {
+func PostCreate(content string, file string, userID string) error {
 	var err error
-	_, err = database.SQL.Exec("INSERT INTO post (content, user_id) VALUES (?,?)", content, userID)
+	_, err = database.SQL.Exec("INSERT INTO post (content, user_id, file_name) VALUES (?,?,?)", content, userID, file)
 	return standardizeError(err)
 }
 

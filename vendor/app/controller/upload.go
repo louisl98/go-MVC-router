@@ -19,6 +19,7 @@ func reseed() uint32 {
 	return uint32(time.Now().UnixNano() + int64(os.Getpid()))
 }
 
+// generate random number
 func nextRandom() string {
 	randmu.Lock()
 	r := rand
@@ -31,6 +32,7 @@ func nextRandom() string {
 	return strconv.Itoa(int(1e9 + r%1e9))[1:]
 }
 
+// use random number as prefix for file name to avoid file overwriting
 func TempFile(dir, pattern string) (f *os.File, err error) {
 	if dir == "" {
 		dir = os.TempDir()
@@ -65,7 +67,6 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
         fmt.Println(err)
         return
 	}
-	fmt.Println(handler.Filename)
     defer file.Close()
     tempFile, err := TempFile("uploads", handler.Filename)
     if err != nil {
