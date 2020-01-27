@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 
 	"app/model"
 	"app/shared/session"
@@ -59,13 +60,14 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get form values
 	content := r.FormValue("post")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
-
+	// Get uploaded file
 	r.ParseMultipartForm(10 << 20)
 	file, handler, e := r.FormFile("upload")
 	if e != nil {
 		fmt.Println(e)
 		return
 	}
+	// add random prefix to filename and upload it to folder
 	defer file.Close()
 	tempFile, filename, ee := TempFile("uploads", handler.Filename)
 	if ee != nil {
@@ -77,7 +79,7 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(eee)
 	}
 	tempFile.Write(fileBytes)
-
+	filename = strings.Replace(filename, "uploads/", "", 1)
 	err := model.PostCreate(content, filename, userID)
 	// Will only error if there is a problem with the query
 	if err != nil {
