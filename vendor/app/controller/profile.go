@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -57,16 +58,27 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	}
 	// Get form values
 	content := r.FormValue("post")
-	_, handler, e := r.FormFile("upload")
-	var file string
-	if e != nil {
-		log.Println(e)
-		file = ""
-	}
-	file = handler.Filename
 	userID := fmt.Sprintf("%s", sess.Values["id"])
-	UploadFile(w, r)
-	err := model.PostCreate(content, file, userID)
+
+	r.ParseMultipartForm(10 << 20)
+	file, handler, e := r.FormFile("upload")
+	if e != nil {
+		fmt.Println(e)
+		return
+	}
+	defer file.Close()
+	tempFile, filename, ee := TempFile("uploads", handler.Filename)
+	if ee != nil {
+		fmt.Println(ee)
+	}
+	defer tempFile.Close()
+	fileBytes, eee := ioutil.ReadAll(file)
+	if eee != nil {
+		fmt.Println(eee)
+	}
+	tempFile.Write(fileBytes)
+
+	err := model.PostCreate(content, filename, userID)
 	// Will only error if there is a problem with the query
 	if err != nil {
 		log.Println(err)

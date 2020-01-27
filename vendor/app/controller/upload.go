@@ -1,9 +1,6 @@
 package controller
 
 import (
-	"fmt"
-	"net/http"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -32,8 +29,8 @@ func nextRandom() string {
 	return strconv.Itoa(int(1e9 + r%1e9))[1:]
 }
 
-// use random number as prefix for file name to avoid file overwriting
-func TempFile(dir, pattern string) (f *os.File, err error) {
+// TempFile uses random number as prefix for file name to avoid file overwriting
+func TempFile(dir, pattern string) (f *os.File, name string, err error) {
 	if dir == "" {
 		dir = os.TempDir()
 	}
@@ -45,7 +42,7 @@ func TempFile(dir, pattern string) (f *os.File, err error) {
 	}
 	nconflict := 0
 	for i := 0; i < 10000; i++ {
-		name := filepath.Join(dir, prefix+nextRandom()+suffix)
+		name = filepath.Join(dir, prefix+nextRandom()+suffix)
 		f, err = os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
 		if os.IsExist(err) {
 			if nconflict++; nconflict > 10 {
@@ -58,24 +55,4 @@ func TempFile(dir, pattern string) (f *os.File, err error) {
 		break
 	}
 	return
-}
-
-func UploadFile(w http.ResponseWriter, r *http.Request) {
-    r.ParseMultipartForm(10 << 20)
-    file, handler, err := r.FormFile("upload")
-    if err != nil {
-        fmt.Println(err)
-        return
-	}
-    defer file.Close()
-    tempFile, err := TempFile("uploads", handler.Filename)
-    if err != nil {
-        fmt.Println(err)
-    }
-    defer tempFile.Close()
-    fileBytes, err := ioutil.ReadAll(file)
-    if err != nil {
-        fmt.Println(err)
-    }
-    tempFile.Write(fileBytes)
 }
