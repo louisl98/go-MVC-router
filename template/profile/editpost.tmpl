@@ -7,10 +7,11 @@
 		<h1>{{template "title" .}}</h1>
 	</div>
 	
-	<form id="form" method="post">
+	<form enctype="multipart/form-data" id="form" method="post">
 		<div class="form-group">
 			<label for="post">Post</label>
 			<div><textarea rows="5" class="form-control" id="post" name="post" placeholder="Type your post here..." />{{.post}}</textarea></div>
+			<input class="upload" name="upload" type="file">
 		</div>
 		
 		<a title="Save" class="btn btn-success" role="submit" onclick="document.getElementById('form').submit();">

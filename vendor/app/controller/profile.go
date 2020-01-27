@@ -140,8 +140,27 @@ func ProfileUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	var params httprouter.Params
 	params = context.Get(r, "params").(httprouter.Params)
 	postID := params.ByName("id")
-	// Get database result
-	err := model.PostUpdate(content, userID, postID)
+	// Get uploaded file
+	r.ParseMultipartForm(10 << 20)
+	file, handler, e := r.FormFile("upload")
+	if e != nil {
+		fmt.Println(e)
+		return
+	}
+	// add random prefix to filename and upload it to folder
+	defer file.Close()
+	tempFile, filename, ee := TempFile("uploads", handler.Filename)
+	if ee != nil {
+		fmt.Println(ee)
+	}
+	defer tempFile.Close()
+	fileBytes, eee := ioutil.ReadAll(file)
+	if eee != nil {
+		fmt.Println(eee)
+	}
+	tempFile.Write(fileBytes)
+	filename = strings.Replace(filename, "uploads/", "", 1)
+	err := model.PostUpdate(content, filename, userID, postID)
 	// Will only error if there is a problem with the query
 	if err != nil {
 		log.Println(err)
