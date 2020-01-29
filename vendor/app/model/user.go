@@ -44,12 +44,12 @@ func UserByEmail(email string) (User, error) {
 	var err error
 	result := User{}
 	err = database.SQL.Get(&result, "SELECT id, password, status_id, username FROM user WHERE email = ? LIMIT 1", email)
-	return result, standardizeError(err)
+	return result, StandardizeError(err)
 }
 
 // UserCreate creates user
 func UserCreate(username, email, password string) error {
 	var err error
 	_, err = database.SQL.Exec("INSERT INTO user (username, email, password) VALUES (?,?,?)", username, email, password)
-	return standardizeError(err)
+	return StandardizeError(err)
 }

@@ -60,37 +60,54 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get form values
 	content := r.FormValue("post")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
-	// Get uploaded file
+	// Max 20MB
 	r.ParseMultipartForm(10 << 20)
-	file, handler, e := r.FormFile("upload")
-	if e != nil {
+	// Check if some files were uploaded
+	if file, handler, _ := r.FormFile("upload"); file != nil {
+		defer file.Close()
+		// add random prefix to filename and upload it to folder
+		tempFile, filename, e := TempFile("uploads", handler.Filename)
+		if e != nil {
 		fmt.Println(e)
-		return
-	}
-	// add random prefix to filename and upload it to folder
-	defer file.Close()
-	tempFile, filename, ee := TempFile("uploads", handler.Filename)
-	if ee != nil {
+		}
+		defer tempFile.Close()
+		fileBytes, ee := ioutil.ReadAll(file)
+		if ee != nil {
 		fmt.Println(ee)
-	}
-	defer tempFile.Close()
-	fileBytes, eee := ioutil.ReadAll(file)
-	if eee != nil {
-		fmt.Println(eee)
-	}
-	tempFile.Write(fileBytes)
-	filename = strings.Replace(filename, "uploads/", "", 1)
-	err := model.PostCreate(content, filename, userID)
-	// Will only error if there is a problem with the query
-	if err != nil {
-		log.Println(err)
-		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
-		sess.Save(r, w)
+		}
+		tempFile.Write(fileBytes)
+		filename = strings.Replace(filename, "uploads/", "", 1)
+		err := model.PostCreate(content, userID)
+		pi, eee := model.GetNextPostID()
+		if eee != nil {
+			fmt.Println(eee)
+		}
+		postID := fmt.Sprint(pi+1)
+		UploadCreate(filename, postID)
+		// Will only error if there is a problem with the query
+		if err != nil {
+			log.Println(err)
+			sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
+			sess.Save(r, w)
+		} else {
+			sess.AddFlash(view.Flash{"Post added!", view.FlashSuccess})
+			sess.Save(r, w)
+			http.Redirect(w, r, "/profile", http.StatusFound)
+			return
+		}
 	} else {
-		sess.AddFlash(view.Flash{"Post added!", view.FlashSuccess})
-		sess.Save(r, w)
-		http.Redirect(w, r, "/profile", http.StatusFound)
-		return
+		err := model.PostCreate(content, userID)
+		// Will only error if there is a problem with the query
+		if err != nil {
+			log.Println(err)
+			sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
+			sess.Save(r, w)
+		} else {
+			sess.AddFlash(view.Flash{"Post added!", view.FlashSuccess})
+			sess.Save(r, w)
+			http.Redirect(w, r, "/profile", http.StatusFound)
+			return
+		}
 	}
 	// Display the same page
 	ProfileCreateGET(w, r)
@@ -106,7 +123,7 @@ func ProfileUpdateGET(w http.ResponseWriter, r *http.Request) {
 	postID := params.ByName("id")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
 	// Get the post
-	post, err := model.PostByID(userID, postID)
+	post, err := model.PostByID(postID, userID)
 	if err != nil { // If the post doesn't exist
 		log.Println(err)
 		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
@@ -120,7 +137,6 @@ func ProfileUpdateGET(w http.ResponseWriter, r *http.Request) {
 	v.Vars["username"] = sess.Values["username"]
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Vars["post"] = post.Content
-	v.Vars["file"] = post.FileName
 	v.Render(w)
 }
 
@@ -141,27 +157,7 @@ func ProfileUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	var params httprouter.Params
 	params = context.Get(r, "params").(httprouter.Params)
 	postID := params.ByName("id")
-	// Get uploaded file
-	r.ParseMultipartForm(10 << 20)
-	file, handler, e := r.FormFile("upload")
-	if e != nil {
-		fmt.Println(e)
-		return
-	}
-	// add random prefix to filename and upload it to folder
-	defer file.Close()
-	tempFile, filename, ee := TempFile("uploads", handler.Filename)
-	if ee != nil {
-		fmt.Println(ee)
-	}
-	defer tempFile.Close()
-	fileBytes, eee := ioutil.ReadAll(file)
-	if eee != nil {
-		fmt.Println(eee)
-	}
-	tempFile.Write(fileBytes)
-	filename = strings.Replace(filename, "uploads/", "", 1)
-	err := model.PostUpdate(content, filename, userID, postID)
+	err := model.PostUpdate(content, userID, postID)
 	// Will only error if there is a problem with the query
 	if err != nil {
 		log.Println(err)
@@ -186,7 +182,7 @@ func ProfileDeleteGET(w http.ResponseWriter, r *http.Request) {
 	params = context.Get(r, "params").(httprouter.Params)
 	postID := params.ByName("id")
 	// Get database result
-	err := model.PostDelete(userID, postID)
+	err := model.PostDelete(postID, userID)
 	// Will only error if there is a problem with the query
 	if err != nil {
 		log.Println(err)

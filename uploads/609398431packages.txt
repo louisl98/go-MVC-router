@@ -1,2 +1,0 @@
-apt list --installed
-brew list

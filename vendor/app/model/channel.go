@@ -28,15 +28,15 @@ func ChannelByUsername(username string) (Channel, error) {
 	var err error
 	result := Channel{}
 	err = database.SQL.Get(&result, "SELECT id, username, created_at FROM user WHERE username = ?  LIMIT 1", username)
-	return result, standardizeError(err)
+	return result, StandardizeError(err)
 }
 
 // PostsByChannelID gets all posts for a channel
 func PostsByChannelID(channelID uint32) ([]Post, error) {
 	var err error
 	var result []Post
-	err = database.SQL.Select(&result, "SELECT id, content, file_name, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", channelID)
-	return result, standardizeError(err)
+	err = database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", channelID)
+	return result, StandardizeError(err)
 }
 
 // ChannelReadGET gets the query and displays the channel
