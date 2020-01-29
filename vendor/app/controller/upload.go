@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -55,4 +56,14 @@ func TempFile(dir, pattern string) (f *os.File, name string, err error) {
 		break
 	}
 	return
+}
+
+// Upload maps static files
+func Upload(w http.ResponseWriter, r *http.Request) {
+	// Disable listing directories
+	if strings.HasSuffix(r.URL.Path, "/") {
+		Error404(w, r)
+		return
+	}
+	http.ServeFile(w, r, r.URL.Path[1:])
 }

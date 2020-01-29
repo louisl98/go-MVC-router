@@ -50,6 +50,8 @@ func routes() *httprouter.Router {
 	r.NotFound = alice.New().ThenFunc(controller.Error404)
 	// Serve static files, no directory browsing
 	r.GET("/static/*filepath", hr.Handler(alice.New().ThenFunc(controller.Static)))
+	// Serve uploaded files, no directory browsing
+	r.GET("/uploads/*filepath", hr.Handler(alice.New().ThenFunc(controller.Upload)))
 	// Home page
 	r.GET("/", hr.Handler(alice.New().ThenFunc(controller.IndexGET)))
 	// Login

@@ -39,3 +39,14 @@ h1, h2, h3, h4, h5, h6 {
 .upload{
   margin-top: 10px;
 }
+
+.glyphicon.glyphicon-pencil{
+  margin-left: 5px;
+  font-size: 12px;
+}
+
+.glyphicon.glyphicon-remove{
+  color: red;
+  margin-left: 5px;
+}
+

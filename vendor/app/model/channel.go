@@ -35,7 +35,7 @@ func ChannelByUsername(username string) (Channel, error) {
 func PostsByChannelID(channelID uint32) ([]Post, error) {
 	var err error
 	var result []Post
-	err = database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", channelID)
+	err = database.SQL.Select(&result, "SELECT id, content, file_name, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", channelID)
 	return result, standardizeError(err)
 }
 
@@ -64,5 +64,3 @@ func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
 	v.Vars["posts"] = posts
 	v.Render(w)
 }
-
-

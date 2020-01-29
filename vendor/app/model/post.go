@@ -54,7 +54,7 @@ func PostCreate(content string, file string, userID string) error {
 // PostUpdate updates a post
 func PostUpdate(content string, file string, userID string, postID string) error {
 	var err error
-	_, err = database.SQL.Exec("UPDATE post SET content=? AND file_name=? WHERE user_id = ? AND id = ? LIMIT 1", content, file, userID, postID)
+	_, err = database.SQL.Exec("UPDATE post SET content=?, file_name=? WHERE user_id = ? AND id = ? LIMIT 1", content, file, userID, postID)
 	return standardizeError(err)
 }
 
@@ -64,4 +64,3 @@ func PostDelete(userID string, postID string) error {
 	_, err = database.SQL.Exec("DELETE FROM post WHERE id = ? AND user_id = ?", postID, userID)
 	return standardizeError(err)
 }
-

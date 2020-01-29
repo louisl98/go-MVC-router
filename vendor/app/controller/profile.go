@@ -120,6 +120,7 @@ func ProfileUpdateGET(w http.ResponseWriter, r *http.Request) {
 	v.Vars["username"] = sess.Values["username"]
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Vars["post"] = post.Content
+	v.Vars["file"] = post.FileName
 	v.Render(w)
 }
 
