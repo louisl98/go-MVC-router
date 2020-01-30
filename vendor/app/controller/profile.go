@@ -26,7 +26,6 @@ func ProfileReadGET(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		posts = []model.Post{}
 	}
-	log.Println(posts)
 	// Display the view
 	v := view.New(r)
 	v.Name = "profile/manageposts"

@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"time"
+	"log"
 
 	"app/shared/database"
 )
@@ -35,6 +36,7 @@ func PostsByUserID(userID string) ([]Post, error) {
 	err := database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
 	for _, r := range result {
 		r.Files, _ = UploadsByPostID(r.ID)
+		log.Println(r)
 	}
 	return result, StandardizeError(err)
 }

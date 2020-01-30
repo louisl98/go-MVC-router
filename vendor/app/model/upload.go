@@ -27,3 +27,9 @@ func UploadsByPostID(postID uint32) ([]Upload, error) {
 	err := database.SQL.Select(&result, "SELECT id, file_name, post_id, uploaded_at, deleted FROM uploads WHERE post_id = ?", postID)
 	return result, StandardizeError(err)
 }
+
+// UploadDelete deletes an upload
+func UploadDelete(ID string, postID string) error {
+	_, err := database.SQL.Exec("DELETE FROM uploads WHERE id = ? AND post_id = ?", ID, postID)
+	return StandardizeError(err)
+}

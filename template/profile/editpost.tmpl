@@ -13,7 +13,10 @@
 		</div>
 		<div class="form-group">
 			<label for="file">Files</label>
+			{{range $n := .Files}}
 			<p><a href="/uploads/{{.file}}">{{.file}}</a><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></p>
+			{{end}}
+			{{.Files}}
 			<input class="upload" name="upload" type="file">
 		</div>
 		<a title="Save" class="btn btn-success" role="submit" onclick="document.getElementById('form').submit();">

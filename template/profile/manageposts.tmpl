@@ -22,6 +22,7 @@
 				{{range $n := .Files}}
 				<a href="/uploads/{{.FileName}}">{{.FileName}}</a>
 				{{end}}
+				{{.Files}}
 				</p>
 				<div style="display: inline-block;">
 					<a title="Edit Post" class="btn btn-warning" role="button" href="{{$.BaseURI}}profile/editpost/{{.ID}}">

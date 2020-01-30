@@ -12,7 +12,11 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<p>{{.Content}}</p>
-				<p>File: <a href="/uploads/filename">filename</a></p>
+				<p>Files: {{range $n := .Files}}
+				<a href="/uploads/{{.FileName}}">{{.FileName}}</a>
+				{{end}}
+				</p>
+				{{.Files}}
 				<span class="pull-right" style="margin-top: 14px;">{{.CreatedAt | PRETTYTIME}}</span>
 			</div>
 		</div>

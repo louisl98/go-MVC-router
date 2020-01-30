@@ -45,13 +45,16 @@ footer{
 }
 
 .glyphicon.glyphicon-pencil{
-  margin-left: 5px;
   font-size: 12px;
 }
 
 .glyphicon.glyphicon-remove{
   color: red;
   margin-left: 5px;
+}
+
+.glyphicon-eye-open, .glyphicon-plus, .glyphicon-pencil, .glyphicon-trash{
+  margin-right: 5px;
 }
 
 .upload{
