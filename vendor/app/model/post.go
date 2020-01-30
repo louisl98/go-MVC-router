@@ -32,10 +32,11 @@ func PostByID(postID string, userID string) (Post, error) {
 // PostsByUserID gets all posts for a user
 func PostsByUserID(userID string) ([]Post, error) {
 	var result []Post
-	e := database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
-
-	// result.Files = database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
-	return result, StandardizeError(e)
+	err := database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
+	for _, r := range result {
+		r.Files, _ = UploadsByPostID(r.ID)
+	}
+	return result, StandardizeError(err)
 }
 
 // PostCreate creates a post and returns its id

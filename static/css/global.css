@@ -12,6 +12,18 @@ h1, h2, h3, h4, h5, h6 {
 	margin-top: 0;
 }
 
+#navbar{
+  text-align: center;
+}
+
+.search{
+  position: absolute;
+  display: unset;
+  width: unset;
+  transform: translateX(-50%) translateY(23%);
+  left: 50%;
+}
+
 /* Notification Styles */
 #flash-container {
   position: fixed;
@@ -25,20 +37,11 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0 15px 15px 0;
 }
 
-#navbar{
-  text-align: center;
-}
-
-.search{
+footer{
   position: absolute;
-  display: unset;
-  width: unset;
-  transform: translateX(-50%) translateY(23%);
-  left: 50%;
-}
-
-.upload{
-  margin-top: 10px;
+  width: 100%;
+  left: 0;
+  bottom: 0;
 }
 
 .glyphicon.glyphicon-pencil{
@@ -51,10 +54,20 @@ h1, h2, h3, h4, h5, h6 {
   margin-left: 5px;
 }
 
-footer{
-  position: absolute;
-  width: 100%;
-  left: 0;
-  bottom: 0;
+.upload{
+  margin-top: 10px;
 }
 
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.panel.panel-default{
+  width: 50%;
+}
+
+.pull-right{
+  align-self: flex-end;
+}
