@@ -51,7 +51,7 @@ func routes() *httprouter.Router {
 	// Serve static files, no directory browsing
 	r.GET("/static/*filepath", hr.Handler(alice.New().ThenFunc(controller.Static)))
 	// Serve uploaded files, no directory browsing
-	r.GET("/uploads/*filepath", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.Upload)))
+	r.GET("/uploads/*filepath", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.UploadServe)))
 	// Home page
 	r.GET("/", hr.Handler(alice.New().ThenFunc(controller.IndexGET)))
 	// Login

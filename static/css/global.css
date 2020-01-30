@@ -30,10 +30,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .search{
-  position: relative;
-  top: 12px;
+  position: absolute;
   display: unset;
   width: unset;
+  transform: translateX(-50%) translateY(23%);
+  left: 50%;
 }
 
 .upload{
@@ -48,5 +49,12 @@ h1, h2, h3, h4, h5, h6 {
 .glyphicon.glyphicon-remove{
   color: red;
   margin-left: 5px;
+}
+
+footer{
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
 }
 

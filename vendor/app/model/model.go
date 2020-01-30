@@ -16,7 +16,7 @@ var (
 	ErrUnauthorized = errors.New("user does not have permission to perform this operation")
 )
 
-// StandardizeErrors returns the same error regardless of the database used
+// StandardizeError returns the same error regardless of the database used
 func StandardizeError(err error) error {
 	if err == sql.ErrNoRows {
 		return ErrNoResult

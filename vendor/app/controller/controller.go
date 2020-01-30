@@ -8,10 +8,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"log"
-
-	"app/shared/database"
-	"app/model"
 )
 
 var rand uint32
@@ -62,20 +58,12 @@ func TempFile(dir, pattern string) (f *os.File, name string, err error) {
 	return
 }
 
-// Upload maps static files
-func Upload(w http.ResponseWriter, r *http.Request) {
+// UploadServe maps static files
+func UploadServe(w http.ResponseWriter, r *http.Request) {
 	// Disable listing directories
 	if strings.HasSuffix(r.URL.Path, "/") {
 		Error404(w, r)
 		return
 	}
 	http.ServeFile(w, r, r.URL.Path[1:])
-}
-
-// UploadCreate creates an upload in the database
-func UploadCreate(filename string, postID string) error {
-	var err error
-	_, err = database.SQL.Exec("INSERT INTO uploads (file_name, post_id) VALUES (?,?)", filename, postID)
-	log.Println(err)
-	return model.StandardizeError(err)
 }

@@ -68,25 +68,20 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 		// add random prefix to filename and upload it to folder
 		tempFile, filename, e := TempFile("uploads", handler.Filename)
 		if e != nil {
-		fmt.Println(e)
+			fmt.Println(e)
 		}
 		defer tempFile.Close()
 		fileBytes, ee := ioutil.ReadAll(file)
 		if ee != nil {
-		fmt.Println(ee)
+			fmt.Println(ee)
 		}
 		tempFile.Write(fileBytes)
 		filename = strings.Replace(filename, "uploads/", "", 1)
-		err := model.PostCreate(content, userID)
-		pi, eee := model.GetNextPostID()
-		if eee != nil {
-			fmt.Println(eee)
-		}
-		postID := fmt.Sprint(pi+1)
-		UploadCreate(filename, postID)
+		postID, err, eee := model.PostCreate(content, userID)
+		model.UploadCreate(filename, postID)
 		// Will only error if there is a problem with the query
-		if err != nil {
-			log.Println(err)
+		if err != nil || eee != nil {
+			log.Println(err, eee)
 			sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 			sess.Save(r, w)
 		} else {
@@ -96,10 +91,10 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		err := model.PostCreate(content, userID)
+		_, err, eee := model.PostCreate(content, userID)
 		// Will only error if there is a problem with the query
-		if err != nil {
-			log.Println(err)
+		if err != nil || eee != nil {
+			log.Println(err, eee)
 			sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 			sess.Save(r, w)
 		} else {

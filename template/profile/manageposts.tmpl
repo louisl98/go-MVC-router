@@ -3,14 +3,14 @@
 {{define "content"}}
 <div class="container">
 	<div class="page-header">
-		<h1>{{.username}}</h1>
+		<h1>@{{.username}}</h1>
 	</div>
 	<p>
 		<a title="View live" class="btn btn-info" role="button" href="/channel/{{.username}}">
-			<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View live
+			<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>View live
 		</a>
 		<a title="New post" class="btn btn-primary" role="button" href="{{$.BaseURI}}profile/newPost">
-			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New post
+			<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>New post
 		</a>
 	</p>
 	
@@ -18,7 +18,7 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<p>Content: {{.Content}}</p>
-				<p>File: <a href="/uploads/filename">filename</a></p>
+				<p>Files: <a href="/uploads/filename">filename</a></p>
 
 				<div style="display: inline-block;">
 					<a title="Edit Post" class="btn btn-warning" role="button" href="{{$.BaseURI}}profile/editpost/{{.ID}}">
@@ -28,7 +28,7 @@
 						<span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete
 					</a>
 				</div>
-				<span class="pull-right" style="margin-top: 14px;"><u>Updated</u>: {{.UpdatedAt | PRETTYTIME}}</span>
+				<span class="pull-right" style="margin-top: 14px;">Updated: {{.UpdatedAt | PRETTYTIME}}</span>
 			</div>
 		</div>
 	{{end}}
