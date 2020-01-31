@@ -21,7 +21,12 @@ func UploadCreate(filename string, postID string) error {
 	return StandardizeError(err)
 }
 
-// UploadsByPostID gets all uploads for a post
+// UploadsGET gets all uploads for a post
+func (p *Post) UploadsGET(files []Upload) {
+    p.Files = files
+}
+
+// UploadsByPostID gets uploads by postID
 func UploadsByPostID(postID uint32) ([]Upload, error) {
 	var result []Upload
 	err := database.SQL.Select(&result, "SELECT id, file_name, post_id, uploaded_at, deleted FROM uploads WHERE post_id = ?", postID)

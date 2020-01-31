@@ -34,10 +34,15 @@ func PostByID(postID string, userID string) (Post, error) {
 func PostsByUserID(userID string) ([]Post, error) {
 	var result []Post
 	err := database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
+	// Get all uploads for a post
 	for _, r := range result {
-		r.Files, _ = UploadsByPostID(r.ID)
-		log.Println(r)
+		uploads, err := UploadsByPostID(r.ID)
+		if err != nil {
+			log.Println(err)
+		}
+		r.UploadsGET(uploads)
 	}
+	log.Println(result)
 	return result, StandardizeError(err)
 }
 
