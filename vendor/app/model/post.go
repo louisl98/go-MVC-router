@@ -3,7 +3,6 @@ package model
 import (
 	"fmt"
 	"time"
-	"log"
 
 	"app/shared/database"
 )
@@ -14,19 +13,20 @@ import (
 
 // Post struct contains the information for each post
 type Post struct {
-	ID        uint32 `db:"id"`
-	Content   string `db:"content"`
-	UserID    uint32 `db:"user_id"`
-	Files     []Upload
+	ID        uint32    `db:"id"`
+	Content   string    `db:"content"`
+	UserID    uint32    `db:"user_id"`
 	CreatedAt time.Time `db:"created_at"`
 	UpdatedAt time.Time `db:"updated_at"`
 	Deleted   uint8     `db:"deleted"`
+	Files     []Upload
 }
 
-// PostByID gets post by ID
+// PostByID gets a post by ID
 func PostByID(postID string, userID string) (Post, error) {
 	result := Post{}
 	err := database.SQL.Get(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE id = ? AND user_id = ? LIMIT 1", postID, userID)
+	result.UploadsGET()
 	return result, StandardizeError(err)
 }
 
@@ -34,15 +34,9 @@ func PostByID(postID string, userID string) (Post, error) {
 func PostsByUserID(userID string) ([]Post, error) {
 	var result []Post
 	err := database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
-	// Get all uploads for a post
-	for _, r := range result {
-		uploads, err := UploadsByPostID(r.ID)
-		if err != nil {
-			log.Println(err)
-		}
-		r.UploadsGET(uploads)
+	for r := range result {
+		result[r].UploadsGET()
 	}
-	log.Println(result)
 	return result, StandardizeError(err)
 }
 

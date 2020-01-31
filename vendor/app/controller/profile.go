@@ -60,10 +60,13 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get form values
 	content := r.FormValue("post")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
-	// Max 20MB
-	r.ParseMultipartForm(10 << 20)
-	// Check if some files were uploaded
+	// Check if a file was uploaded
 	if file, handler, _ := r.FormFile("upload"); file != nil {
+		//get the *fileheaders
+		files := r.MultipartForm.File["upload"] // grab the filenames
+		log.Println(files)
+		// Max 20MB
+		r.ParseMultipartForm(10 << 20)
 		defer file.Close()
 		// add random prefix to filename and upload it to folder
 		tempFile, filename, e := TempFile("uploads", handler.Filename)
@@ -132,6 +135,7 @@ func ProfileUpdateGET(w http.ResponseWriter, r *http.Request) {
 	v.Vars["username"] = sess.Values["username"]
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
 	v.Vars["post"] = post.Content
+	v.Vars["files"] = post.Files
 	v.Render(w)
 }
 
@@ -152,6 +156,22 @@ func ProfileUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	var params httprouter.Params
 	params = context.Get(r, "params").(httprouter.Params)
 	postID := params.ByName("id")
+	r.ParseMultipartForm(10 << 20)
+	if file, handler, _ := r.FormFile("upload"); file != nil {
+		defer file.Close()
+		tempFile, filename, e := TempFile("uploads", handler.Filename)
+		if e != nil {
+			fmt.Println(e)
+		}
+		defer tempFile.Close()
+		fileBytes, ee := ioutil.ReadAll(file)
+		if ee != nil {
+			fmt.Println(ee)
+		}
+		tempFile.Write(fileBytes)
+		filename = strings.Replace(filename, "uploads/", "", 1)
+		model.UploadCreate(filename, postID)
+	}
 	err := model.PostUpdate(content, userID, postID)
 	// Will only error if there is a problem with the query
 	if err != nil {

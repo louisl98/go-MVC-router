@@ -12,11 +12,14 @@
 		<div class="panel panel-default">
 			<div class="panel-body">
 				<p>{{.Content}}</p>
-				<p>Files: {{range $n := .Files}}
-				<a href="/uploads/{{.FileName}}">{{.FileName}}</a>
-				{{end}}
-				</p>
-				{{.Files}}
+				<div style="display:flex;">
+					<p style="margin-right:5px;">Files:</p> 
+						<div style="display:flex;flex-direction:column;margin-bottom:10px;">
+							{{range $n := .Files}}
+								<a href="/uploads/{{.FileName}}">{{.ShortName}}</a>
+							{{end}}
+						</div>
+				</div>
 				<span class="pull-right" style="margin-top: 14px;">{{.CreatedAt | PRETTYTIME}}</span>
 			</div>
 		</div>

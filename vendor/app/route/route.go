@@ -69,6 +69,7 @@ func routes() *httprouter.Router {
 	r.POST("/profile/newpost", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileCreatePOST)))
 	r.GET("/profile/editpost/:id", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileUpdateGET)))
 	r.POST("/profile/editpost/:id", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileUpdatePOST)))
+	r.GET("/profile/deletefile/:fileid", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.FileDeleteGET)))
 	r.GET("/profile/delete/:id", hr.Handler(alice.New(acl.DisallowAnon).ThenFunc(controller.ProfileDeleteGET)))
 	// Channel
 	r.GET("/channel/:username", hr.Handler(alice.New().ThenFunc(model.ChannelReadGET)))

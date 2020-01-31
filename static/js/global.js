@@ -59,3 +59,7 @@ function search(e) {
         window.location.href = "/channel/"+e.value;       
     }
 }
+
+$('.addfiles span').click(function(){
+    $('<input class="upload" name="upload" type="file">').insertAfter($('.addfiles'));
+});

@@ -74,3 +74,32 @@ footer{
 .pull-right{
   align-self: flex-end;
 }
+
+form#form{
+  width: 50%;
+}
+
+.form-group.text textarea{
+  height: 350px;
+}
+
+.form-group.files{
+  margin-bottom: 30px;
+}
+
+.addfiles{
+  display: flex;
+  margin-bottom: -10px;
+}
+
+.addfile{
+  cursor: pointer;
+}
+
+input.upload{
+  margin-bottom: 10px;
+}
+
+a.save, a.back{
+  margin-top: 20px;
+}

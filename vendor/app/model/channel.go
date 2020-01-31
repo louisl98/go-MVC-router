@@ -36,13 +36,15 @@ func PostsByChannelID(channelID uint32) ([]Post, error) {
 	var err error
 	var result []Post
 	err = database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", channelID)
+	for r := range result {
+		result[r].UploadsGET()
+	}
 	return result, StandardizeError(err)
 }
 
 // ChannelReadGET gets the query and displays the channel
 func ChannelReadGET(w http.ResponseWriter, r *http.Request) {
-	uri := r.RequestURI
-	var request = strings.Trim(uri, "/channel/")
+	request := strings.Trim(r.RequestURI, "/channel/")
 	// Check if user exists
 	channel, err := ChannelByUsername(request)
 	if err != nil {

@@ -8,10 +8,12 @@
 	</div>
 	
 	<form enctype="multipart/form-data" id="form" method="post">
-		<div class="form-group">
+		<div class="form-group text">
 			<label for="post">Post</label>
 			<div><textarea rows="5" class="form-control" id="post" name="post" placeholder="Type your post here..." value="" /></textarea></div>
-			<input class="upload" name="upload" type="file">
+			<div class="addfiles">
+				<input class="upload" name="upload" type="file"><span style="margin-top:10px;margin-left:-10px;color:#5cb85c;" class="glyphicon glyphicon-plus addfile"></span>
+			</div>
 		</div>
 		<a title="Save" class="btn btn-success" name="upload" role="submit" onclick="document.getElementById('form').submit();">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save
