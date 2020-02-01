@@ -77,7 +77,6 @@ func FileDeleteGET(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 	ID := strings.Trim(r.RequestURI, "/profile/deletefile/")
-	log.Println(ID)
 	postID, e := model.PostIDByFileID(ID)
 	if e != nil {
 		log.Println(e)

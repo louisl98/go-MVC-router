@@ -60,38 +60,39 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get form values
 	content := r.FormValue("post")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
-	// Check if a file was uploaded
-	if file, handler, _ := r.FormFile("upload"); file != nil {
-		//get the *fileheaders
-		files := r.MultipartForm.File["upload"] // grab the filenames
+	r.ParseMultipartForm(32 << 20)
+	// Check if any files were uploaded
+	if files := r.MultipartForm.File["upload"]; files != nil {
 		log.Println(files)
-		// Max 20MB
-		r.ParseMultipartForm(10 << 20)
-		defer file.Close()
-		// add random prefix to filename and upload it to folder
-		tempFile, filename, e := TempFile("uploads", handler.Filename)
-		if e != nil {
-			fmt.Println(e)
-		}
-		defer tempFile.Close()
-		fileBytes, ee := ioutil.ReadAll(file)
-		if ee != nil {
-			fmt.Println(ee)
-		}
-		tempFile.Write(fileBytes)
-		filename = strings.Replace(filename, "uploads/", "", 1)
-		postID, err, eee := model.PostCreate(content, userID)
-		model.UploadCreate(filename, postID)
-		// Will only error if there is a problem with the query
-		if err != nil || eee != nil {
-			log.Println(err, eee)
-			sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
-			sess.Save(r, w)
-		} else {
-			sess.AddFlash(view.Flash{"Post added!", view.FlashSuccess})
-			sess.Save(r, w)
-			http.Redirect(w, r, "/profile", http.StatusFound)
-			return
+		for i := range files {
+			file, err := files[i].Open()
+			defer file.Close()
+			if err != nil {
+				log.Println(w, err)
+			}
+			tempFile, filename, e := TempFile("uploads", files[i].Filename)
+			if e != nil {
+				log.Println(e)
+			}
+			defer tempFile.Close()
+			fileBytes, ee := ioutil.ReadAll(file)
+			if ee != nil {
+				log.Println(ee)
+			}
+			tempFile.Write(fileBytes)
+			filename = strings.Replace(filename, "uploads/", "", 1)
+			postID, err, eee := model.PostCreate(content, userID)
+			model.UploadCreate(filename, postID)
+			if err != nil || eee != nil {
+				log.Println(err, eee)
+				sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
+				sess.Save(r, w)
+			} else {
+				sess.AddFlash(view.Flash{"Post added!", view.FlashSuccess})
+				sess.Save(r, w)
+				http.Redirect(w, r, "/profile", http.StatusFound)
+				return
+			}
 		}
 	} else {
 		_, err, eee := model.PostCreate(content, userID)
@@ -107,6 +108,7 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+
 	// Display the same page
 	ProfileCreateGET(w, r)
 }
