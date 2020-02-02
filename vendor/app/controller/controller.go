@@ -98,7 +98,7 @@ func FileDeleteGET(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-// FileForm gets all fils for a corresponding form key
+// FileForm gets all files for a corresponding form key
 func (r *Request) FileForm(key string) (multipart.File, *multipart.FileHeader, error, error) {
 	if r.MultipartForm == multipartByReader {
 		return nil, nil, errors.New("http: multipart handled by MultipartReader")
