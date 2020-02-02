@@ -4,7 +4,9 @@ import (
 	"app/model"
 	"app/shared/session"
 	"app/shared/view"
+	"errors"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -34,7 +36,7 @@ func nextRandom() string {
 	return strconv.Itoa(int(1e9 + r%1e9))[1:]
 }
 
-// TempFile uses random number as prefix for file name to avoid file overwriting
+// TempFile uses a random number as prefix for file name to avoid file overwriting and returns a new file and its file name
 func TempFile(dir, pattern string) (f *os.File, name string, err error) {
 	if dir == "" {
 		dir = os.TempDir()
@@ -94,4 +96,24 @@ func FileDeleteGET(w http.ResponseWriter, r *http.Request) {
 	}
 	http.Redirect(w, r, "/profile/editpost/"+postID, http.StatusFound)
 	return
+}
+
+// FileForm gets all fils for a corresponding form key
+func (r *Request) FileForm(key string) (multipart.File, *multipart.FileHeader, error, error) {
+	if r.MultipartForm == multipartByReader {
+		return nil, nil, errors.New("http: multipart handled by MultipartReader")
+	}
+	if r.MultipartForm == nil {
+		err := r.ParseMultipartForm(defaultMaxMemory)
+		if err != nil {
+			return nil, nil, err
+		}
+	}
+	if r.MultipartForm != nil && r.MultipartForm.File != nil {
+		if fhs := r.MultipartForm.File[key]; len(fhs) > 0 {
+			f, err := fhs[0].Open()
+			return f, fhs[0], err
+		}
+	}
+	return nil, nil, ErrMissingFile
 }

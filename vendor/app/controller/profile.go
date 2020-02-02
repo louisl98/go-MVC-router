@@ -62,8 +62,10 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	userID := fmt.Sprintf("%s", sess.Values["id"])
 	r.ParseMultipartForm(32 << 20)
 	// Check if any files were uploaded
+	// rewrite FormFile to FileForm in controller.go to return all files instead of first
 	if files := r.MultipartForm.File["upload"]; files != nil {
 		log.Println(files)
+		// loop on FileForm("upload")
 		for i := range files {
 			file, err := files[i].Open()
 			defer file.Close()
