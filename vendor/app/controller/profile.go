@@ -2,10 +2,8 @@ package controller
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 
 	"app/model"
 	"app/shared/session"
@@ -59,33 +57,9 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	}
 	content := r.FormValue("post")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
-	postID, err, eee := model.PostCreate(content, userID)
+	p, err, eee := model.PostCreate(content, userID)
 	// Get form values
-	r.ParseMultipartForm(32 << 20)
-	if f, _ := r.MultipartForm.File["upload"]; f != nil {
-		formdata := r.MultipartForm
-		for _, files := range formdata.File {
-			for i := range files {
-				file, err := files[i].Open()
-				defer file.Close()
-				if err != nil {
-					log.Println(w, err)
-				}
-				tempFile, filename, e := TempFile("uploads", files[i].Filename)
-				if e != nil {
-					log.Println(e)
-				}
-				defer tempFile.Close()
-				fileBytes, ee := ioutil.ReadAll(file)
-				if ee != nil {
-					log.Println(ee)
-				}
-				tempFile.Write(fileBytes)
-				filename = strings.Replace(filename, "uploads/", "", 1)
-				model.UploadCreate(filename, postID)
-			}
-		}
-	}
+	p.FormUploadsGET(w, r)
 	// Will only error if there is a problem with the query
 	if err != nil || eee != nil {
 		log.Println(err, eee)
@@ -146,26 +120,11 @@ func ProfileUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	var params httprouter.Params
 	params = context.Get(r, "params").(httprouter.Params)
 	postID := params.ByName("id")
-	r.ParseMultipartForm(10 << 20)
-	if file, handler, _ := r.FormFile("upload"); file != nil {
-		defer file.Close()
-		tempFile, filename, e := TempFile("uploads", handler.Filename)
-		if e != nil {
-			fmt.Println(e)
-		}
-		defer tempFile.Close()
-		fileBytes, ee := ioutil.ReadAll(file)
-		if ee != nil {
-			fmt.Println(ee)
-		}
-		tempFile.Write(fileBytes)
-		filename = strings.Replace(filename, "uploads/", "", 1)
-		model.UploadCreate(filename, postID)
-	}
-	err := model.PostUpdate(content, userID, postID)
+	p, err, ee := model.PostUpdate(content, userID, postID)
+	p.FormUploadsGET(w, r)
 	// Will only error if there is a problem with the query
-	if err != nil {
-		log.Println(err)
+	if err != nil || ee != nil {
+		log.Println(err, ee)
 		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 		sess.Save(r, w)
 	} else {
