@@ -46,11 +46,10 @@ func nextRandom() string {
 
 // FormUploadsGET gets all uploaded files in the form
 func (p *Post) FormUploadsGET(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(32 << 20)
 	if f, _ := r.MultipartForm.File["upload"]; f != nil {
-		formdata := r.MultipartForm
-		for _, files := range formdata.File {
+		for _, files := range r.MultipartForm.File {
 			for i := range files {
+				r.ParseMultipartForm(32 << 20)
 				file, err := files[i].Open()
 				defer file.Close()
 				if err != nil {
