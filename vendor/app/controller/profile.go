@@ -146,10 +146,11 @@ func ProfileDeleteGET(w http.ResponseWriter, r *http.Request) {
 	params = context.Get(r, "params").(httprouter.Params)
 	postID := params.ByName("id")
 	// Get database result
+	_, e := model.PostByID(postID, userID)
 	err := model.PostDelete(postID, userID)
 	// Will only error if there is a problem with the query
-	if err != nil {
-		log.Println(err)
+	if err != nil || e != nil {
+		log.Println(err, e)
 		sess.AddFlash(view.Flash{"An error occurred on the server. Please try again later.", view.FlashError})
 		sess.Save(r, w)
 	} else {
