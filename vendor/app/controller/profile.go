@@ -49,7 +49,7 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 	// Validate with required fields
-	if validate, missingField := view.Validate(r, []string{"post"}); !validate {
+	if validate, missingField := view.Validate(r, []string{"title", "post"}); !validate {
 		sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
 		sess.Save(r, w)
 		ProfileCreateGET(w, r)
@@ -110,7 +110,7 @@ func ProfileUpdatePOST(w http.ResponseWriter, r *http.Request) {
 	// Get session
 	sess := session.Instance(r)
 	// Validate with required fields
-	if validate, missingField := view.Validate(r, []string{"post"}); !validate {
+	if validate, missingField := view.Validate(r, []string{"title", "post"}); !validate {
 		sess.AddFlash(view.Flash{"Field missing: " + missingField, view.FlashError})
 		sess.Save(r, w)
 		ProfileUpdateGET(w, r)
