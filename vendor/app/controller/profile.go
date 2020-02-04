@@ -55,9 +55,10 @@ func ProfileCreatePOST(w http.ResponseWriter, r *http.Request) {
 		ProfileCreateGET(w, r)
 		return
 	}
+	title := r.FormValue("title")
 	content := r.FormValue("post")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
-	p, err, eee := model.PostCreate(content, userID)
+	p, err, eee := model.PostCreate(title, content, userID)
 	// Get form values
 	p.FormUploadsGET(w, r)
 	// Will only error if there is a problem with the query
@@ -98,6 +99,7 @@ func ProfileUpdateGET(w http.ResponseWriter, r *http.Request) {
 	v.Name = "profile/editpost"
 	v.Vars["username"] = sess.Values["username"]
 	v.Vars["token"] = csrfbanana.Token(w, r, sess)
+	v.Vars["title"] = post.Title
 	v.Vars["post"] = post.Content
 	v.Vars["files"] = post.Files
 	v.Render(w)
@@ -115,12 +117,13 @@ func ProfileUpdatePOST(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Get form values
+	title := r.FormValue("title")
 	content := r.FormValue("post")
 	userID := fmt.Sprintf("%s", sess.Values["id"])
 	var params httprouter.Params
 	params = context.Get(r, "params").(httprouter.Params)
 	postID := params.ByName("id")
-	p, err, ee := model.PostUpdate(content, userID, postID)
+	p, err, ee := model.PostUpdate(title, content, userID, postID)
 	p.FormUploadsGET(w, r)
 	// Will only error if there is a problem with the query
 	if err != nil || ee != nil {

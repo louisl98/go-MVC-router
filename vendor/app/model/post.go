@@ -13,6 +13,7 @@ import (
 // Post struct contains the information for each post
 type Post struct {
 	ID        uint32    `db:"id"`
+	Title     string    `db:"title"`
 	Content   string    `db:"content"`
 	UserID    uint32    `db:"user_id"`
 	CreatedAt time.Time `db:"created_at"`
@@ -24,7 +25,7 @@ type Post struct {
 // PostByID gets a post by ID
 func PostByID(postID string, userID string) (Post, error) {
 	result := Post{}
-	err := database.SQL.Get(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE id = ? AND user_id = ? LIMIT 1", postID, userID)
+	err := database.SQL.Get(&result, "SELECT id, title, content, user_id, created_at, updated_at, deleted FROM post WHERE id = ? AND user_id = ? LIMIT 1", postID, userID)
 	result.UploadsGET()
 	return result, StandardizeError(err)
 }
@@ -32,7 +33,7 @@ func PostByID(postID string, userID string) (Post, error) {
 // PostsByUserID gets all posts for a user
 func PostsByUserID(userID string) ([]Post, error) {
 	var result []Post
-	err := database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
+	err := database.SQL.Select(&result, "SELECT id, title, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", userID)
 	for r := range result {
 		result[r].UploadsGET()
 	}
@@ -40,18 +41,18 @@ func PostsByUserID(userID string) ([]Post, error) {
 }
 
 // PostCreate creates a post and returns it
-func PostCreate(content string, userID string) (Post, error, error) {
-	_, e := database.SQL.Exec("INSERT INTO post (content, user_id) VALUES (?,?)", content, userID)
+func PostCreate(title string, content string, userID string) (Post, error, error) {
+	_, e := database.SQL.Exec("INSERT INTO post (title, content, user_id) VALUES (?,?,?)", title, content, userID)
 	result := Post{}
-	err := database.SQL.Get(&result, "SELECT id FROM post WHERE content = ? AND user_id = ? LIMIT 1", content, userID)
+	err := database.SQL.Get(&result, "SELECT id, created_at, updated_at, deleted FROM post WHERE title = ? AND content = ? AND user_id = ? LIMIT 1", title, content, userID)
 	return result, StandardizeError(e), StandardizeError(err)
 }
 
 // PostUpdate updates a post and returns it
-func PostUpdate(content string, userID string, postID string) (Post, error, error) {
-	_, e := database.SQL.Exec("UPDATE post SET content=? WHERE user_id = ? AND id = ? LIMIT 1", content, userID, postID)
+func PostUpdate(title string, content string, userID string, postID string) (Post, error, error) {
+	_, e := database.SQL.Exec("UPDATE post SET title=?, content=? WHERE user_id = ? AND id = ? LIMIT 1", title, content, userID, postID)
 	result := Post{}
-	err := database.SQL.Get(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE id = ? AND user_id = ? LIMIT 1", postID, userID)
+	err := database.SQL.Get(&result, "SELECT id, title, content, user_id, created_at, updated_at, deleted FROM post WHERE id = ? AND user_id = ? LIMIT 1", postID, userID)
 	return result, StandardizeError(e), StandardizeError(err)
 }
 

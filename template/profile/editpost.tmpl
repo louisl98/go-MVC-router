@@ -8,16 +8,18 @@
 	</div>
 	<form enctype="multipart/form-data" id="form" method="post">
 		<div class="form-group text">
+			<label for="post">Title</label>
+			<div><textarea rows="1" class="form-control" id="title" name="title" placeholder="Your title" />{{.title}}</textarea></div>
 			<label for="post">Post</label>
-			<div><textarea rows="5" class="form-control" id="post" name="post" placeholder="Type your post here..." />{{.post}}</textarea></div>
+			<div><textarea rows="10" class="form-control" id="post" name="post" placeholder="Type your post here..." />{{.post}}</textarea></div>
 		</div>
 		<div class="form-group files">
-			<label for="file">Files</label>
+			<label for="files">Files</label>
 			{{range $n := .files}}
 			<p><a href="/uploads/{{.FileName}}">{{.FileName}}</a><a href="/profile/deletefile/{{.ID}}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></p>
 			{{end}}
 			<div class="addfiles">
-				<input class="upload" name="upload" type="file"><span style="margin-top:10px;margin-left:-10px;color:#5cb85c;" class="glyphicon glyphicon-plus addfile"></span>
+				<input class="upload" name="upload" type="file"><span style="margin-left:-10px;color:#5cb85c;" class="glyphicon glyphicon-plus addfile"></span>
 		</div>
 		<a title="Save" class="btn btn-success save" role="submit" onclick="document.getElementById('form').submit();">
 			<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save

@@ -27,7 +27,7 @@ type Channel struct {
 func ChannelByUsername(username string) (Channel, error) {
 	var err error
 	result := Channel{}
-	err = database.SQL.Get(&result, "SELECT id, username, created_at FROM user WHERE username = ?  LIMIT 1", username)
+	err = database.SQL.Get(&result, "SELECT id, username, created_at, updated_at FROM user WHERE username = ?  LIMIT 1", username)
 	return result, StandardizeError(err)
 }
 
@@ -35,7 +35,7 @@ func ChannelByUsername(username string) (Channel, error) {
 func PostsByChannelID(channelID uint32) ([]Post, error) {
 	var err error
 	var result []Post
-	err = database.SQL.Select(&result, "SELECT id, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", channelID)
+	err = database.SQL.Select(&result, "SELECT id, title, content, user_id, created_at, updated_at, deleted FROM post WHERE user_id = ?", channelID)
 	for r := range result {
 		result[r].UploadsGET()
 	}
