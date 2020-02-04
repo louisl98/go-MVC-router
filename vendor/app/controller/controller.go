@@ -35,8 +35,8 @@ func FileDeleteGET(w http.ResponseWriter, r *http.Request) {
 		sess.Save(r, w)
 	} else {
 		// Get database result
-		err := model.FileDelete(ID, postID)
-		if err == nil {
+		err, e := model.FileDelete(ID, postID)
+		if err == nil || e == nil {
 			sess.AddFlash(view.Flash{"File deleted!", view.FlashSuccess})
 			sess.Save(r, w)
 		}

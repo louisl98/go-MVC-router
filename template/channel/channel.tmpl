@@ -13,10 +13,10 @@
 			<div class="panel-body">
 				<p>{{.Content}}</p>
 				<div style="display:flex;">
-					<p style="margin-right:5px;">Files:</p> 
 						<div style="display:flex;flex-direction:column;margin-bottom:10px;">
 							{{range $n := .Files}}
 								<a href="/uploads/{{.FileName}}">{{.ShortName}}</a>
+							{{else}}No files.
 							{{end}}
 						</div>
 				</div>

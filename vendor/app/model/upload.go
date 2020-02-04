@@ -125,7 +125,14 @@ func PostIDByFileID(fileID string) (string, error) {
 }
 
 // FileDelete deletes a file
-func FileDelete(ID string, postID string) error {
+func FileDelete(ID string, postID string) (error, error) {
+	r := Upload{}
+	e := database.SQL.Get(&r, "SELECT id, file_name, short_name, post_id, uploaded_at, deleted FROM uploads WHERE id = ? AND post_id = ? LIMIT 1", ID, postID)
+	filepath := r.FileName
+	var ee = os.Remove("uploads/" + filepath)
+	if ee != nil {
+		log.Println(ee)
+	}
 	_, err := database.SQL.Exec("DELETE FROM UPLOADS WHERE id = ? AND post_id = ?", ID, postID)
-	return StandardizeError(err)
+	return StandardizeError(e), StandardizeError(err)
 }
